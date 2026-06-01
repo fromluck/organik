@@ -24,7 +24,8 @@ body {
     linear-gradient(135deg, rgba(36, 116, 90, 0.08), transparent 32rem),
     var(--bg);
   color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  font-weight: 400;
 }
 
 button,
@@ -1927,9 +1928,14 @@ select {
   align-self: start;
   color: #030705;
   font-size: 2rem;
+  font-weight: 600;
 }
 
 .auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
   width: min(100%, 24rem);
   min-height: 3rem;
   border: 0;
@@ -1937,7 +1943,33 @@ select {
   background: #020403;
   color: white;
   cursor: pointer;
-  font-weight: 900;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.auth-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  place-items: center;
+}
+
+.auth-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.google-icon {
+  padding: 0.12rem;
+  border-radius: 50%;
+  background: white;
+}
+
+.apple-icon,
+.email-icon {
+  color: currentColor;
 }
 
 .auth-button:disabled {
@@ -1972,7 +2004,7 @@ select {
   background: white;
   color: #07110d;
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .terms-link {
@@ -1998,6 +2030,22 @@ select {
   font-size: clamp(3rem, 5.4vw, 5.8rem);
   font-weight: 400;
   line-height: 1.08;
+}
+
+@media (max-width: 980px) {
+  .auth-stage {
+    grid-template-columns: minmax(0, 32rem);
+    justify-content: center;
+  }
+
+  .auth-panel {
+    min-height: auto;
+    padding: 2.5rem 1rem;
+  }
+
+  .auth-art {
+    display: none;
+  }
 }
 
 .curve {
