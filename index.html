@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Organik | Organizacao financeira</title>
+    <link rel="stylesheet" href="styles.css?v=28">
+  </head>
+  <body>
+    <section class="login-screen" id="loginScreen">
+      <nav class="landing-nav" aria-label="Menu inicial">
+        <strong>Organik</strong>
+        <div>
+          <a href="#loginForm">Recursos</a>
+          <a href="#loginForm">Cartoes</a>
+          <a href="#loginForm">Diagnostico</a>
+          <a href="#loginForm">Projecoes</a>
+        </div>
+        <a class="landing-login-link" href="#acesso" data-open-auth>Iniciar sessao -></a>
+      </nav>
+
+      <div class="landing-hero">
+        <div class="landing-main" id="landingMain">
+          <div class="hero-pill"><strong>Novo</strong><span>Organize faturas, limites e parcelas em um so lugar</span></div>
+          <h1>Entenda sua vida financeira antes que ela aperte.</h1>
+          <p>O Organik mostra quanto do salario ja esta comprometido, quais cartoes estao no limite e ate quando ainda existem contas a pagar.</p>
+          <div class="landing-actions">
+            <a class="store-button" href="#acesso" data-open-auth>Acessar no navegador <span>-></span></a>
+            <a class="outline-button" href="#acesso" data-open-auth>Explorar recursos</a>
+          </div>
+        </div>
+
+        <div class="auth-stage is-hidden" id="acesso">
+          <form class="auth-panel" id="loginForm">
+            <strong class="auth-logo">Organik</strong>
+            <input id="loginName" name="name" type="hidden" value="Jefferson Lucio">
+            <input id="loginPassword" name="password" type="hidden" value="local">
+            <button class="auth-button" type="submit">G Continuar com o Google</button>
+            <button class="auth-button" type="submit">Apple Continuar com Apple</button>
+            <button class="auth-button" type="submit">Email Continuar com e-mail</button>
+            <p>Ao continuar, voce concorda com nossos <a href="#acesso">Termos de Uso</a> e <a href="#acesso">Politica de Privacidade</a>.</p>
+            <button class="auth-login" type="submit">Ja tem uma conta? Entrar</button>
+            <a class="terms-link" href="#acesso">Termos de Uso</a>
+          </form>
+
+          <div class="auth-art" aria-hidden="true">
+            <h2>O controle financeiro que voce precisa.</h2>
+            <span class="curve curve-one"></span>
+            <span class="curve curve-two"></span>
+            <span class="curve curve-three"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="app-shell is-hidden" id="appShell">
+      <aside class="side-nav" aria-label="Menu principal">
+        <div class="side-brand">
+          <span class="brand-mark">O</span>
+          <strong>Organik</strong>
+        </div>
+        <nav>
+          <span class="nav-section">Controle</span>
+          <a class="active" href="#dashboard">▦ Dashboard</a>
+          <a href="#compromissos">↔ Transacoes</a>
+          <a href="#diagnostico">↻ Recorrentes</a>
+          <a href="#terceiros">▤ Contas</a>
+          <a href="#cartoes">▭ Cartoes</a>
+          <a href="#graficos">✧ Organik IA</a>
+          <span class="nav-section">Organizacao</span>
+          <a href="#diagnostico">◴ Limites de gastos</a>
+          <a href="#diagnostico">◎ Metas</a>
+          <a href="#cartoes">↗ Investimentos</a>
+          <a href="#graficos">▥ Relatorios</a>
+          <a href="#dashboard">⚙ Configuracoes</a>
+        </nav>
+        <div class="side-profile">
+          <div class="profile-avatar">J</div>
+          <div>
+            <strong>Jefferson Lucio</strong>
+            <span id="syncStatus">Modo local</span>
+          </div>
+        </div>
+      </aside>
+
+      <header class="topbar">
+        <div class="dashboard-title">
+          <span>▥</span>
+          <strong id="pageTitle">Dashboard</strong>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" type="button" aria-label="Notificacoes">!</button>
+          <button class="icon-button" type="button" aria-label="Filtros">≡</button>
+          <div class="profile-menu">
+          <button class="profile-pill" id="profileMenuButton" type="button" aria-expanded="false" aria-controls="profileDropdown">
+            <span>J</span>
+            <strong>Jefferson</strong>
+            <small>⌄</small>
+          </button>
+          <div class="profile-dropdown is-hidden" id="profileDropdown">
+            <a href="#dashboard">Minha conta</a>
+            <a href="#dashboard">Editar perfil <span>⇧⌘P</span></a>
+            <a href="#dashboard">Meu plano <span>⌘B</span></a>
+            <a href="#dashboard">Configuracoes <span>⌘S</span></a>
+            <hr>
+            <small>Meus perfis</small>
+            <a href="#dashboard">Trocar de perfil <span>›</span></a>
+            <a class="disabled" href="#dashboard">Novo perfil <span>⌘+T</span></a>
+            <hr>
+            <a href="#dashboard">Claro <span>›</span></a>
+            <a href="#dashboard">Portugues <span>›</span></a>
+            <hr>
+            <a href="#dashboard">FAQ</a>
+            <a href="#dashboard">Suporte</a>
+            <a class="disabled" href="#dashboard">API em breve</a>
+            <hr>
+            <button id="profileLogoutButton" type="button">Sair <span>⇧⌘Q</span></button>
+          </div>
+          </div>
+          <button class="secondary-button" id="logoutButton" type="button">Sair</button>
+        </div>
+      </header>
+
+      <main>
+      <section class="app-page active" data-page="dashboard">
+      <section class="dashboard-hero" id="dashboard">
+        <h1>Ola, Jefferson Lucio!</h1>
+        <p>Aqui esta o resumo da sua situacao financeira.</p>
+      </section>
+
+      <div class="dashboard-toolbar">
+        <div class="period-menu-wrap">
+          <button class="period-summary-button" id="periodMenuButton" type="button" aria-expanded="false" aria-controls="periodMenu">
+            <span>▦</span>
+            <strong>Resumo de <b id="selectedMonthLabel">Maio</b></strong>
+            <i>⌃</i>
+          </button>
+          <div class="period-menu is-hidden" id="periodMenu">
+            <div class="period-menu-year">
+              <button id="previousYear" type="button" aria-label="Ano anterior">‹</button>
+              <strong id="selectedYearLabel">2026</strong>
+              <button id="nextYear" type="button" aria-label="Proximo ano">›</button>
+            </div>
+            <div class="period-month-grid" id="periodMonthGrid">
+              <button type="button" data-month="0">Janeiro</button>
+              <button type="button" data-month="1">Fevereiro</button>
+              <button type="button" data-month="2">Marco</button>
+              <button type="button" data-month="3">Abril</button>
+              <button type="button" data-month="4">Maio</button>
+              <button type="button" data-month="5">Junho</button>
+              <button type="button" data-month="6">Julho</button>
+              <button type="button" data-month="7">Agosto</button>
+              <button type="button" data-month="8">Setembro</button>
+              <button type="button" data-month="9">Outubro</button>
+              <button type="button" data-month="10">Novembro</button>
+              <button type="button" data-month="11">Dezembro</button>
+            </div>
+          </div>
+        </div>
+        <button class="secondary-button" type="button">Expandir</button>
+      </div>
+
+      <section class="summary-grid" aria-label="Resumo financeiro">
+        <article class="metric">
+          <span class="metric-label">Salario fixo</span>
+          <strong id="incomeTotal">R$ 0,00</strong>
+          <small>Enfermeiro do municipio.</small>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Compromissos reais sem terceiros</span>
+          <strong id="monthlyTotal">R$ 0,00</strong>
+          <small>Sua parte nas faturas, parcelamentos e gastos fixos.</small>
+        </article>
+        <article class="metric balance-metric">
+          <span class="metric-label">Saldo apos compromissos</span>
+          <strong id="monthlyBalance">R$ 0,00</strong>
+          <small id="balanceDetail">Calculando...</small>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Maior peso</span>
+          <strong id="largestBill">-</strong>
+          <small id="largestBillDetail">Aguardando dados.</small>
+        </article>
+      </section>
+
+      <section class="diagnosis-panel" id="diagnostico" aria-label="Diagnostico da situacao financeira">
+        <div>
+          <span class="diagnosis-kicker">Diagnostico do mes</span>
+          <h2 id="diagnosisTitle">Aguardando compromissos</h2>
+          <p id="diagnosisText">Cadastre seus gastos para ver a gravidade da situacao financeira.</p>
+        </div>
+        <div class="diagnosis-score">
+          <span id="diagnosisPercent">0%</span>
+          <small>do salario comprometido</small>
+        </div>
+      </section>
+
+      <section class="budget-callout">
+        <div class="callout-icon">▣</div>
+        <div>
+          <h2>Configure seu orcamento</h2>
+          <p>Informe metas de gasto e acompanhe o quanto ainda pode usar no dia, na semana e no mes.</p>
+        </div>
+        <button class="primary-button" type="button">Configurar agora -></button>
+      </section>
+
+      <section class="panel cards-panel" id="cartoes" aria-label="Cartoes do Jeff">
+        <div class="panel-heading">
+          <div>
+            <h2>Cartoes do Jeff</h2>
+            <p>Limite, uso atual, faturas e ate quando ainda existem cobranças.</p>
+          </div>
+        </div>
+
+        <div class="cards-summary-grid">
+          <div>
+            <span>Limite total</span>
+            <strong id="cardsLimitTotal">R$ 0,00</strong>
+          </div>
+          <div>
+            <span>Usado nos cartoes</span>
+            <strong id="cardsUsedTotal">R$ 0,00</strong>
+          </div>
+          <div>
+            <span>Disponivel</span>
+            <strong id="cardsAvailableTotal">R$ 0,00</strong>
+          </div>
+          <div>
+            <span>Maior risco</span>
+            <strong id="cardsRiskName">-</strong>
+          </div>
+        </div>
+
+        <div class="credit-card-list" id="creditCardList"></div>
+
+        <div class="card-timeline-wrap">
+          <h2>Projecao das faturas</h2>
+          <div class="card-timeline" id="cardTimeline"></div>
+        </div>
+      </section>
+
+      <section class="insight-grid" id="graficos" aria-label="Graficos da situacao financeira">
+        <article class="panel chart-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Salario comprometido</h2>
+              <p>Quanto das entradas fixas ja esta reservado.</p>
+            </div>
+          </div>
+          <div class="donut-layout">
+            <div class="donut-chart" id="incomeDonut" role="img" aria-label="Percentual do salario comprometido">
+              <span id="incomeUsage">0%</span>
+            </div>
+            <div class="chart-stat-list">
+              <div>
+                <span>Comprometido</span>
+                <strong id="committedAmount">R$ 0,00</strong>
+              </div>
+              <div>
+                <span>Disponivel</span>
+                <strong id="availableAmount">R$ 0,00</strong>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel chart-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Renda x compromissos</h2>
+              <p>Comparacao direta do que entra e do que ja sai.</p>
+            </div>
+          </div>
+          <div class="flow-chart" id="flowChart"></div>
+        </article>
+
+        <article class="panel chart-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Resumo do mes</h2>
+              <p>Leitura rapida da sua folga financeira.</p>
+            </div>
+          </div>
+          <div class="month-reading" id="monthReading"></div>
+        </article>
+      </section>
+
+      <details class="panel third-party-panel" id="terceiros" open>
+        <summary>
+          <div>
+            <h2>Contas de terceiros</h2>
+            <p id="thirdPartySummary">Valores que aparecem nos seus cartoes, mas nao sao sua despesa real.</p>
+          </div>
+        </summary>
+
+        <div class="third-party-summary-grid">
+          <div>
+            <span>Total de terceiros</span>
+            <strong id="thirdPartyTotal">R$ 0,00</strong>
+          </div>
+          <div>
+            <span>Sua parte nas faturas</span>
+            <strong id="thirdPartyOwnTotal">R$ 0,00</strong>
+          </div>
+          <div>
+            <span>Total geral das faturas</span>
+            <strong id="thirdPartyGeneralTotal">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <div class="third-party-table-wrap">
+          <table class="third-party-table">
+            <thead>
+              <tr>
+                <th>Conta / cartao</th>
+                <th>Total geral</th>
+                <th>Sua parte</th>
+                <th>Terceiros</th>
+              </tr>
+            </thead>
+            <tbody id="thirdPartyTable"></tbody>
+          </table>
+        </div>
+      </details>
+
+      <section class="workspace" id="compromissos">
+        <details class="panel commitments-panel" open>
+          <summary>
+            <div>
+              <h2>Compromissos atuais</h2>
+              <p id="commitmentsSummary">Somente sua parte real no mes selecionado.</p>
+            </div>
+          </summary>
+
+          <div class="commitment-tools">
+            <button class="secondary-button" id="resetData" type="button">Restaurar dados iniciais</button>
+          </div>
+          <div class="bill-list" id="billList"></div>
+        </details>
+
+      </section>
+      </section>
+
+      <section class="app-page" data-page="transacoes">
+        <div class="page-heading">
+          <div>
+            <h1>Transacoes</h1>
+            <p>Registre tudo que entrou e saiu, com filtros rapidos por periodo e tipo.</p>
+          </div>
+          <div class="transaction-actions">
+            <button class="secondary-button" type="button">Ordenar</button>
+            <button class="secondary-button" type="button">Exportar</button>
+            <button class="primary-button" type="button">+ Adicionar Transacao</button>
+          </div>
+        </div>
+
+        <div class="transaction-tabs">
+          <button class="active" type="button">Fluxo de caixa</button>
+          <button type="button">Todos os lancamentos</button>
+        </div>
+
+        <div class="transaction-metrics">
+          <article><span class="metric-icon income-icon">↗</span><div><span>Receitas</span><strong class="positive-value">R$ 0,00</strong></div></article>
+          <article><span class="metric-icon income-icon">▣</span><div><span>Recebido</span><strong class="positive-value">R$ 0,00</strong></div></article>
+          <article><span class="metric-icon expense-icon">↘</span><div><span>Despesas</span><strong>R$ 0,00</strong></div></article>
+          <article><span class="metric-icon expense-icon">▣</span><div><span>Pago</span><strong>R$ 0,00</strong></div></article>
+          <article><span class="metric-icon income-icon">◎</span><div><span>Balanco</span><strong class="positive-value">R$ 0,00</strong></div></article>
+        </div>
+
+        <button class="expand-button" type="button">⌄ Expandir</button>
+
+        <div class="transaction-filter-bar">
+          <div class="pill-tabs">
+            <button class="active" type="button">Geral</button>
+            <button type="button">Cartoes</button>
+            <button type="button">Contas</button>
+          </div>
+          <label class="transaction-search">
+            <span>Buscar</span>
+            <input type="search" placeholder="Buscar transacoes...">
+          </label>
+          <button class="secondary-button" type="button">01/05/2026 - 31/05/2026</button>
+          <button class="secondary-button" type="button">Filtrar transacoes</button>
+        </div>
+
+        <div class="transaction-table-shell">
+          <div class="transaction-skeleton-row"><span></span><i></i><b></b><b></b></div>
+          <div class="transaction-skeleton-row"><span></span><i></i><b></b><b></b></div>
+          <div class="transaction-skeleton-row"><span></span><i></i><b></b><b></b></div>
+          <div class="transaction-skeleton-row"><span></span><i></i><b></b><b></b></div>
+          <div class="transaction-skeleton-row"><span></span><i></i><b></b><b></b></div>
+        </div>
+      </section>
+
+      <section class="app-page" data-page="recorrentes">
+        <div class="page-heading"><div><h1>Recorrentes</h1><p>Contas fixas, assinaturas e parcelamentos previstos.</p></div></div>
+        <div class="recurring-metrics">
+          <article><span class="metric-icon expense-icon">↘</span><div><span>Despesas</span><strong>R$ 0,00</strong></div></article>
+          <article><span class="metric-icon income-icon">↗</span><div><span>Receitas</span><strong class="positive-value">R$ 0,00</strong></div></article>
+          <article><span class="metric-icon income-icon">◎</span><div><span>Balanco</span><strong class="positive-value">R$ 0,00</strong></div></article>
+        </div>
+
+        <div class="recurring-filter-bar">
+          <div class="pill-tabs">
+            <button class="active" type="button">Recorrentes <strong>0</strong></button>
+            <button type="button">Parceladas <strong>0</strong></button>
+          </div>
+          <label class="transaction-search">
+            <span>Buscar</span>
+            <input type="search" placeholder="Buscar transacoes...">
+          </label>
+          <button class="secondary-button" type="button">01/05/2026 - 31/05/2026</button>
+          <button class="secondary-button" type="button">Filtrar transacoes</button>
+        </div>
+
+        <div class="recurring-table-shell">
+          <div class="recurring-table-head">
+            <span><input type="checkbox" aria-label="Selecionar todos"></span>
+            <span>Data</span>
+            <span>Descricao</span>
+            <span>Categoria</span>
+            <span>Conta</span>
+            <span>Status</span>
+            <span>Valor</span>
+          </div>
+          <div class="empty-recurring-state">
+            <div>▣</div>
+            <strong>Sem transacoes</strong>
+            <span>Nenhum lancamento encontrado para este periodo.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="app-page" data-page="contas">
+        <div class="page-heading"><div><h1>Contas</h1><p>Origem do dinheiro e saldos manuais.</p></div><button class="primary-button" type="button">+ Nova conta</button></div>
+        <div class="cards-summary-grid">
+          <div><span>Salario fixo</span><strong>R$ 4.926,69</strong></div>
+          <div><span>Carteira</span><strong>R$ 0,00</strong></div>
+          <div><span>Banco principal</span><strong>A definir</strong></div>
+          <div><span>Transferencias</span><strong>Em breve</strong></div>
+        </div>
+      </section>
+
+      <section class="app-page" data-page="categorias">
+        <div class="page-heading">
+          <div>
+            <h1>Categorias</h1>
+            <p>Gerencie suas categorias de receitas e despesas.</p>
+          </div>
+          <button class="primary-button compact-action" type="button">+ Adicionar categoria</button>
+        </div>
+        <div class="category-tabs">
+          <button class="active" type="button">Categorias <strong>25</strong></button>
+          <button type="button">Subcategorias <strong>95</strong></button>
+        </div>
+        <div class="category-grid">
+          <article style="--cat:#20c933"><span>◧</span><strong>alimentacao</strong><small>Padrao</small></article>
+          <article style="--cat:#77b5c6"><span>◧</span><strong>assinaturas</strong><small>Padrao</small></article>
+          <article style="--cat:#e91e63"><span>♡</span><strong>caridade e doacoes</strong><small>Padrao</small></article>
+          <article style="--cat:#f763a9"><span>◧</span><strong>compras e lazer</strong><small>Padrao</small></article>
+          <article style="--cat:#8a18c9"><span>✦</span><strong>educacao e desenvolvimento</strong><small>Padrao</small></article>
+          <article style="--cat:#ff2a1d"><span>⚙</span><strong>emergencias</strong><small>Padrao</small></article>
+          <article style="--cat:#8a8a8a"><span>▣</span><strong>emprestimos</strong><small>Padrao</small></article>
+          <article style="--cat:#d961e6"><span>▦</span><strong>entretenimento digital</strong><small>Padrao</small></article>
+          <article style="--cat:#31bdb8"><span>☺</span><strong>hobbies e atividades</strong><small>Padrao</small></article>
+          <article style="--cat:#de7b00"><span>▤</span><strong>impostos e taxas</strong><small>Padrao</small></article>
+          <article style="--cat:#b7bf00"><span>↗</span><strong>investimentos</strong><small>Padrao</small></article>
+          <article style="--cat:#080808"><span>⌕</span><strong>manutencao e reparos</strong><small>Padrao</small></article>
+          <article style="--cat:#9d4a1d"><span>⌂</span><strong>moradia</strong><small>Padrao</small></article>
+          <article style="--cat:#444"><span>•••</span><strong>outros</strong><small>Padrao</small></article>
+          <article style="--cat:#1d2a8c"><span>▭</span><strong>pagamentos</strong><small>Padrao</small></article>
+          <article style="--cat:#af6337"><span>●</span><strong>pets</strong><small>Padrao</small></article>
+          <article style="--cat:#63bd6d"><span>♧</span><strong>poupanca</strong><small>Padrao</small></article>
+          <article style="--cat:#04750e"><span>▣</span><strong>renda</strong><small>Padrao</small></article>
+          <article style="--cat:#a40303"><span>◧</span><strong>saude e bem-estar</strong><small>Padrao</small></article>
+          <article style="--cat:#3367d6"><span>◇</span><strong>seguros</strong><small>Padrao</small></article>
+          <article style="--cat:#3d0091"><span>▥</span><strong>servicos financeiros</strong><small>Padrao</small></article>
+          <article style="--cat:#ef2525"><span>▤</span><strong>streaming</strong><small>Padrao</small></article>
+          <article style="--cat:#777"><span>↔</span><strong>transferencia</strong><small>Padrao</small></article>
+          <article style="--cat:#b7b700"><span>▭</span><strong>transporte</strong><small>Padrao</small></article>
+          <article style="--cat:#35bdb8"><span>✈</span><strong>viagem</strong><small>Padrao</small></article>
+        </div>
+      </section>
+
+      <section class="app-page" data-page="cartoes">
+        <div class="page-heading"><div><h1>Cartoes</h1><p>Limites, faturas, compras e ate quando ainda existem parcelas.</p></div></div>
+        <div class="cards-summary-grid">
+          <div><span>Limite total</span><strong id="cardsLimitTotalPage">R$ 0,00</strong></div>
+          <div><span>Usado</span><strong id="cardsUsedTotalPage">R$ 0,00</strong></div>
+          <div><span>Disponivel</span><strong id="cardsAvailableTotalPage">R$ 0,00</strong></div>
+          <div><span>Maior risco</span><strong id="cardsRiskNamePage">-</strong></div>
+        </div>
+        <div class="credit-card-list" id="creditCardListPage"></div>
+      </section>
+
+      <section class="app-page" data-page="organik-ia">
+        <div class="page-heading"><div><h1>Organik IA</h1><p>Analises automaticas para agir antes do problema crescer.</p></div></div>
+        <div class="ai-grid">
+          <article class="panel ai-card"><strong>Cartoes quase sem limite</strong><p>Nubank, C6 e Facil Visa estao acima de 95% de uso.</p><button class="secondary-button">Ver cartoes</button></article>
+          <article class="panel ai-card"><strong>Mes critico</strong><p>Com os dados atuais, falta dinheiro para fechar o mes.</p><button class="secondary-button">Ver diagnostico</button></article>
+          <article class="panel ai-card"><strong>Parcelas futuras</strong><p>Existem cobrancas previstas ate outubro de 2026.</p><button class="secondary-button">Ver projecao</button></article>
+        </div>
+      </section>
+
+      <section class="app-page" data-page="limites">
+        <div class="page-heading"><div><h1>Limites de gastos</h1><p>Controle preventivo por categoria.</p></div></div>
+        <div class="budget-list">
+          <div class="budget-row"><span>Alimentacao</span><strong>R$ 550 / R$ 800</strong><div><i style="width:69%"></i></div></div>
+          <div class="budget-row"><span>Moradia</span><strong>R$ 770 / R$ 900</strong><div><i style="width:86%"></i></div></div>
+          <div class="budget-row"><span>Cartoes</span><strong>Alerta maximo</strong><div><i style="width:96%"></i></div></div>
+        </div>
+      </section>
+
+      <section class="app-page" data-page="metas">
+        <div class="page-heading"><div><h1>Metas</h1><p>Objetivos financeiros com previsao simples.</p></div><button class="primary-button" type="button">+ Nova meta</button></div>
+        <div class="panel goal-card"><strong>Reserva de emergencia</strong><p>Se guardar R$ 300 por mes, em 12 meses voce tera R$ 3.600.</p></div>
+      </section>
+
+      <section class="app-page" data-page="investimentos">
+        <div class="page-heading"><div><h1>Investimentos</h1><p>Acompanhe patrimonio, rendimento e evolucao.</p></div></div>
+        <div class="empty-state"><strong>Carteira ainda nao cadastrada.</strong><span>Comece adicionando CDI, Tesouro, acoes ou cripto manualmente.</span></div>
+      </section>
+
+      <section class="app-page" data-page="relatorios">
+        <div class="page-heading"><div><h1>Relatorios</h1><p>Entenda para onde o dinheiro foi.</p></div></div>
+        <div class="ai-grid">
+          <article class="panel ai-card"><strong>Para onde foi meu dinheiro</strong><p>Grafico por categoria.</p></article>
+          <article class="panel ai-card"><strong>Cartoes</strong><p>Qual cartao mais consome.</p></article>
+          <article class="panel ai-card"><strong>Economia mensal</strong><p>Quanto sobrou ou faltou por mes.</p></article>
+        </div>
+      </section>
+
+      <section class="app-page" data-page="configuracoes">
+        <div class="page-heading"><div><h1>Configuracoes</h1><p>Conta, dados pessoais, acesso e aparencia.</p></div></div>
+        <div class="settings-layout">
+          <aside class="settings-menu">
+            <button class="active" type="button">Minha conta</button>
+            <button type="button">Dados pessoais</button>
+            <button type="button">Email e senha</button>
+            <button type="button">Aparencia</button>
+            <button type="button">Seguranca</button>
+          </aside>
+          <section class="settings-panel">
+            <div class="settings-profile">
+              <span>J</span>
+              <div>
+                <h2>Jefferson Lucio</h2>
+                <p>Organik em modo local. Seus dados ficam salvos neste navegador.</p>
+              </div>
+            </div>
+            <div class="settings-grid">
+              <label>Nome completo<input type="text" value="Jefferson Lucio"></label>
+              <label>Email<input type="email" placeholder="seuemail@exemplo.com"></label>
+              <label>Telefone<input type="tel" placeholder="(00) 00000-0000"></label>
+              <label>Senha<input type="password" value="organik123"></label>
+              <label>Tema<select><option>Claro</option><option>Escuro</option><option>Sistema</option></select></label>
+              <label>Moeda<select><option>Real brasileiro (BRL)</option></select></label>
+            </div>
+            <div class="settings-actions">
+              <button class="secondary-button" type="button">Cancelar</button>
+              <button class="primary-button" type="button">Salvar alteracoes</button>
+            </div>
+          </section>
+        </div>
+      </section>
+      </main>
+    </div>
+
+    <script src="supabase-config.js?v=28"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js?v=28"></script>
+  </body>
+</html>
