@@ -353,6 +353,9 @@ async function signOut() {
 function setAuthenticated(isAuthenticated, user = null) {
   loginScreen.classList.toggle("is-hidden", isAuthenticated);
   appShell.classList.toggle("is-hidden", !isAuthenticated);
+  if (!isAuthenticated) {
+    loginScreen.classList.remove("is-auth-open");
+  }
   if (isAuthenticated && user) {
     updateProfileName(user.user_metadata?.full_name || user.email || "Jefferson");
   }
@@ -373,6 +376,7 @@ function updateProfileName(name) {
 }
 
 function showAuthStage() {
+  loginScreen.classList.add("is-auth-open");
   landingMain.classList.add("is-hidden");
   authStage.classList.remove("is-hidden");
   authStage.scrollIntoView({ behavior: "smooth", block: "start" });

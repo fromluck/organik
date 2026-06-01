@@ -1915,6 +1915,29 @@ select {
   text-align: left;
 }
 
+.login-screen.is-auth-open {
+  padding: 0;
+  background: #ffffff;
+}
+
+.login-screen.is-auth-open .landing-nav {
+  display: none;
+}
+
+.login-screen.is-auth-open .landing-hero {
+  display: block;
+  min-height: 100vh;
+  padding: 0;
+  text-align: left;
+}
+
+.login-screen.is-auth-open .auth-stage {
+  grid-template-columns: 420px minmax(0, 1fr);
+  gap: 0;
+  min-height: 100vh;
+  margin: 0;
+}
+
 .auth-panel {
   display: grid;
   align-content: center;
@@ -1924,11 +1947,26 @@ select {
   padding: 2rem;
 }
 
+.login-screen.is-auth-open .auth-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  min-height: 100vh;
+  padding: 60px 66px 40px;
+}
+
 .auth-logo {
   align-self: start;
   color: #030705;
   font-size: 2rem;
   font-weight: 600;
+}
+
+.login-screen.is-auth-open .auth-logo {
+  justify-self: center;
+  font-size: 1.6rem;
+  font-weight: 700;
 }
 
 .auth-button {
@@ -1945,6 +1983,22 @@ select {
   cursor: pointer;
   font-weight: 600;
   letter-spacing: 0;
+}
+
+.login-screen.is-auth-open .auth-button {
+  width: 288px;
+  min-height: 36px;
+  gap: 0.42rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.login-screen.is-auth-open .auth-button:first-of-type {
+  margin-top: 232px;
+}
+
+.login-screen.is-auth-open .auth-button + .auth-button {
+  margin-top: 14px;
 }
 
 .auth-icon {
@@ -1984,12 +2038,25 @@ select {
   text-align: center;
 }
 
+.login-screen.is-auth-open .auth-status {
+  min-height: 1.3rem;
+  margin-top: 18px;
+  font-size: 0.7rem;
+}
+
 .auth-panel p {
   max-width: 24rem;
   color: var(--muted);
   font-size: 0.78rem;
   line-height: 1.35;
   text-align: center;
+}
+
+.login-screen.is-auth-open .auth-panel p {
+  width: 288px;
+  margin: 18px 0 0;
+  font-size: 0.58rem;
+  line-height: 1.35;
 }
 
 .auth-panel a {
@@ -2007,9 +2074,22 @@ select {
   font-weight: 600;
 }
 
+.login-screen.is-auth-open .auth-login {
+  width: 288px;
+  min-height: 38px;
+  margin-top: 48px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
 .terms-link {
   align-self: end;
   margin-top: 5rem;
+}
+
+.login-screen.is-auth-open .terms-link {
+  margin-top: auto;
+  font-size: 0.65rem;
 }
 
 .auth-art {
@@ -2022,6 +2102,13 @@ select {
   padding: 4.8rem 3rem;
 }
 
+.login-screen.is-auth-open .auth-art {
+  min-height: calc(100vh - 48px);
+  margin: 24px 18px 24px 0;
+  padding: 124px 38px;
+  border-radius: 8px;
+}
+
 .auth-art h2 {
   position: relative;
   z-index: 1;
@@ -2032,18 +2119,56 @@ select {
   line-height: 1.08;
 }
 
+.login-screen.is-auth-open .auth-art h2 {
+  max-width: 680px;
+  font-size: clamp(2.7rem, 2.85vw, 3.65rem);
+  line-height: 1.12;
+  font-weight: 400;
+}
+
+.login-screen.is-auth-open .curve {
+  border-width: 6px;
+}
+
+.login-screen.is-auth-open .curve-one {
+  width: 980px;
+  height: 470px;
+  right: -120px;
+  bottom: -190px;
+  transform: rotate(-8deg);
+}
+
+.login-screen.is-auth-open .curve-two {
+  width: 960px;
+  height: 430px;
+  left: -230px;
+  bottom: -235px;
+  transform: rotate(12deg);
+}
+
+.login-screen.is-auth-open .curve-three {
+  width: 720px;
+  height: 260px;
+  right: 190px;
+  bottom: -178px;
+  transform: rotate(7deg);
+}
+
 @media (max-width: 980px) {
-  .auth-stage {
+  .auth-stage,
+  .login-screen.is-auth-open .auth-stage {
     grid-template-columns: minmax(0, 32rem);
     justify-content: center;
   }
 
-  .auth-panel {
+  .auth-panel,
+  .login-screen.is-auth-open .auth-panel {
     min-height: auto;
     padding: 2.5rem 1rem;
   }
 
-  .auth-art {
+  .auth-art,
+  .login-screen.is-auth-open .auth-art {
     display: none;
   }
 }
