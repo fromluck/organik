@@ -1940,6 +1940,18 @@ select {
   font-weight: 900;
 }
 
+.auth-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.auth-status {
+  min-height: 1rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
 .auth-panel p {
   max-width: 24rem;
   color: var(--muted);

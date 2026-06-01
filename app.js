@@ -169,6 +169,8 @@ const landingMain = document.querySelector("#landingMain");
 const authStage = document.querySelector("#acesso");
 const loginForm = document.querySelector("#loginForm");
 const loginName = document.querySelector("#loginName");
+const googleLoginButton = document.querySelector("#googleLoginButton");
+const authStatus = document.querySelector("#authStatus");
 const logoutButton = document.querySelector("#logoutButton");
 const profileMenuButton = document.querySelector("#profileMenuButton");
 const profileDropdown = document.querySelector("#profileDropdown");
@@ -193,8 +195,8 @@ let supabaseClient = null;
 let selectedPeriod = getInitialPeriod();
 
 setupPeriodPicker();
-setupSession();
 setupSupabase();
+setupSession();
 setupPageNavigation();
 
 function loadBills() {
@@ -269,9 +271,18 @@ function showPage(pageName) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function setupSession() {
-  const savedSession = localStorage.getItem(sessionStorageKey);
-  setAuthenticated(Boolean(savedSession));
+async function setupSession() {
+  if (supabaseClient) {
+    const { data } = await supabaseClient.auth.getSession();
+    setAuthenticated(Boolean(data.session), data.session?.user);
+
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+      setAuthenticated(Boolean(session), session?.user);
+    });
+  } else {
+    const savedSession = localStorage.getItem(sessionStorageKey);
+    setAuthenticated(Boolean(savedSession));
+  }
 
   authOpenButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
@@ -282,21 +293,21 @@ function setupSession() {
 
   loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (supabaseClient) {
+      setAuthStatus("Use o botao do Google para entrar com Supabase.");
+      return;
+    }
+
     const name = loginName.value.trim() || "Jefferson Lucio";
     localStorage.setItem(sessionStorageKey, JSON.stringify({ name, loggedAt: new Date().toISOString() }));
     setAuthenticated(true);
   });
 
-  logoutButton.addEventListener("click", () => {
-    localStorage.removeItem(sessionStorageKey);
-    setAuthenticated(false);
-  });
+  googleLoginButton?.addEventListener("click", signInWithGoogle);
 
-  profileLogoutButton.addEventListener("click", () => {
-    localStorage.removeItem(sessionStorageKey);
-    setAuthenticated(false);
-    closeProfileMenu();
-  });
+  logoutButton.addEventListener("click", signOut);
+
+  profileLogoutButton.addEventListener("click", signOut);
 
   profileMenuButton.addEventListener("click", () => {
     const isOpen = profileMenuButton.getAttribute("aria-expanded") === "true";
@@ -311,9 +322,54 @@ function setupSession() {
   });
 }
 
-function setAuthenticated(isAuthenticated) {
+async function signInWithGoogle() {
+  if (!supabaseClient) {
+    setAuthStatus("Configure o Supabase para ativar o login com Google.");
+    return;
+  }
+
+  setAuthStatus("Abrindo login do Google...");
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin + window.location.pathname
+    }
+  });
+
+  if (error) {
+    setAuthStatus(error.message);
+  }
+}
+
+async function signOut() {
+  if (supabaseClient) {
+    await supabaseClient.auth.signOut();
+  }
+  localStorage.removeItem(sessionStorageKey);
+  setAuthenticated(false);
+  closeProfileMenu();
+}
+
+function setAuthenticated(isAuthenticated, user = null) {
   loginScreen.classList.toggle("is-hidden", isAuthenticated);
   appShell.classList.toggle("is-hidden", !isAuthenticated);
+  if (isAuthenticated && user) {
+    updateProfileName(user.user_metadata?.full_name || user.email || "Jefferson");
+  }
+}
+
+function setAuthStatus(message) {
+  if (authStatus) authStatus.textContent = message;
+}
+
+function updateProfileName(name) {
+  const firstName = name.split(" ")[0] || "Jefferson";
+  document.querySelectorAll(".side-profile strong").forEach((element) => {
+    element.textContent = name;
+  });
+  document.querySelectorAll(".profile-pill strong").forEach((element) => {
+    element.textContent = firstName;
+  });
 }
 
 function showAuthStage() {

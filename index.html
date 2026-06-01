@@ -35,9 +35,10 @@
             <strong class="auth-logo">Organik</strong>
             <input id="loginName" name="name" type="hidden" value="Jefferson Lucio">
             <input id="loginPassword" name="password" type="hidden" value="local">
-            <button class="auth-button" type="submit">G Continuar com o Google</button>
-            <button class="auth-button" type="submit">Apple Continuar com Apple</button>
+            <button class="auth-button" id="googleLoginButton" type="button">G Continuar com o Google</button>
+            <button class="auth-button" type="button" disabled>Apple Continuar com Apple</button>
             <button class="auth-button" type="submit">Email Continuar com e-mail</button>
+            <span class="auth-status" id="authStatus"></span>
             <p>Ao continuar, voce concorda com nossos <a href="#acesso">Termos de Uso</a> e <a href="#acesso">Politica de Privacidade</a>.</p>
             <button class="auth-login" type="submit">Ja tem uma conta? Entrar</button>
             <a class="terms-link" href="#acesso">Termos de Uso</a>
@@ -566,8 +567,8 @@
       </main>
     </div>
 
-    <script src="supabase-config.js?v=28"></script>
+    <script src="supabase-config.js?v=29"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=28"></script>
+    <script src="app.js?v=29"></script>
   </body>
 </html>
