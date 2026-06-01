@@ -1,4 +1,4 @@
 window.ORGANIK_SUPABASE = {
-  url: "",
-  anonKey: ""
+  url: "https://fmeylprtztfxrltrpuar.supabase.co",
+  anonKey: "sb_publishable_HmjGmi57KErNyMMhsJeajg_FkTsKlFH"
 };
