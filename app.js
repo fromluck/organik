@@ -18,6 +18,8 @@ const fixedIncome = 4926.69;
 const baseProjectionPeriod = { month: 4, year: 2026 };
 const legacyStorageKey = "jefferson-financas-bills";
 const storageKey = "jefferson-financas-bills-v2";
+const userBillsStoragePrefix = "organik-user-bills";
+const userCardsStoragePrefix = "organik-user-cards";
 const periodStorageKey = "jefferson-financas-period";
 const sessionStorageKey = "jefferson-financas-session";
 const correctedBills = [];
@@ -171,6 +173,8 @@ const loginForm = document.querySelector("#loginForm");
 const loginName = document.querySelector("#loginName");
 const googleLoginButton = document.querySelector("#googleLoginButton");
 const authStatus = document.querySelector("#authStatus");
+const dashboardGreeting = document.querySelector("#dashboardGreeting");
+const cardsSectionTitle = document.querySelector("#cardsSectionTitle");
 const logoutButton = document.querySelector("#logoutButton");
 const profileMenuButton = document.querySelector("#profileMenuButton");
 const profileDropdown = document.querySelector("#profileDropdown");
@@ -193,6 +197,8 @@ const creditCardListPage = document.querySelector("#creditCardListPage");
 let bills = loadBills();
 let supabaseClient = null;
 let selectedPeriod = getInitialPeriod();
+let activeBillsStorageKey = storageKey;
+let activeCreditCards = [...creditCards];
 const urlParams = new URLSearchParams(window.location.search);
 const isAuthPopup = urlParams.has("authPopup");
 
@@ -201,23 +207,25 @@ setupSupabase();
 setupSession();
 setupPageNavigation();
 
-function loadBills() {
+function loadBills(key = storageKey, options = {}) {
+  const includeDefaults = options.includeDefaults ?? true;
   localStorage.removeItem(legacyStorageKey);
-  const saved = localStorage.getItem(storageKey);
-  if (!saved) return cloneInitialBills();
+  const saved = localStorage.getItem(key);
+  if (!saved) return includeDefaults ? cloneInitialBills() : [];
 
   try {
     const parsed = JSON.parse(saved);
-    if (!Array.isArray(parsed)) return cloneInitialBills();
+    if (!Array.isArray(parsed)) return includeDefaults ? cloneInitialBills() : [];
 
-    return mergeMissingInitialBills(applyBillCorrections(normalizeSavedBills(parsed)));
+    const normalized = applyBillCorrections(normalizeSavedBills(parsed));
+    return includeDefaults ? mergeMissingInitialBills(normalized) : normalized;
   } catch {
-    return cloneInitialBills();
+    return includeDefaults ? cloneInitialBills() : [];
   }
 }
 
 function saveBills() {
-  localStorage.setItem(storageKey, JSON.stringify(bills));
+  localStorage.setItem(activeBillsStorageKey, JSON.stringify(bills));
 }
 
 function setupSupabase() {
@@ -291,6 +299,14 @@ async function setupSession() {
     });
   } else {
     const savedSession = localStorage.getItem(sessionStorageKey);
+    if (savedSession) {
+      try {
+        const parsedSession = JSON.parse(savedSession);
+        updateProfileName(parsedSession.name || "Jefferson Lucio");
+      } catch {
+        updateProfileName("Jefferson Lucio");
+      }
+    }
     setAuthenticated(Boolean(savedSession));
   }
 
@@ -310,7 +326,9 @@ async function setupSession() {
 
     const name = loginName.value.trim() || "Jefferson Lucio";
     localStorage.setItem(sessionStorageKey, JSON.stringify({ name, loggedAt: new Date().toISOString() }));
+    updateProfileName(name);
     setAuthenticated(true);
+    render();
   });
 
   googleLoginButton?.addEventListener("click", signInWithGoogle);
@@ -411,9 +429,13 @@ function setAuthenticated(isAuthenticated, user = null) {
   appShell.classList.toggle("is-hidden", !isAuthenticated);
   if (!isAuthenticated) {
     loginScreen.classList.remove("is-auth-open");
+    activeBillsStorageKey = storageKey;
+    activeCreditCards = [...creditCards];
   }
   if (isAuthenticated && user) {
-    updateProfileName(user.user_metadata?.full_name || user.email || "Jefferson");
+    loadUserFinancialData(user);
+    updateProfileName(getUserDisplayName(user));
+    render();
   }
 }
 
@@ -422,13 +444,55 @@ function setAuthStatus(message) {
 }
 
 function updateProfileName(name) {
-  const firstName = name.split(" ")[0] || "Jefferson";
+  const cleanName = name.trim() || "Usuario";
+  const firstName = cleanName.split(" ")[0] || cleanName;
+  const initial = firstName.charAt(0).toUpperCase() || "U";
+
   document.querySelectorAll(".side-profile strong").forEach((element) => {
-    element.textContent = name;
+    element.textContent = cleanName;
   });
   document.querySelectorAll(".profile-pill strong").forEach((element) => {
     element.textContent = firstName;
   });
+  document.querySelectorAll("[data-profile-initial]").forEach((element) => {
+    element.textContent = initial;
+  });
+  if (dashboardGreeting) {
+    dashboardGreeting.textContent = `Ola, ${cleanName}!`;
+  }
+  if (cardsSectionTitle) {
+    cardsSectionTitle.textContent = `Cartoes de ${firstName}`;
+  }
+}
+
+function getUserDisplayName(user) {
+  return (
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.user_metadata?.user_name ||
+    user?.email?.split("@")[0] ||
+    "Usuario"
+  );
+}
+
+function loadUserFinancialData(user) {
+  if (!user?.id) return;
+
+  activeBillsStorageKey = `${userBillsStoragePrefix}-${user.id}`;
+  bills = loadBills(activeBillsStorageKey, { includeDefaults: false });
+  activeCreditCards = loadUserCreditCards(user.id);
+}
+
+function loadUserCreditCards(userId) {
+  const saved = localStorage.getItem(`${userCardsStoragePrefix}-${userId}`);
+  if (!saved) return [];
+
+  try {
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 function showAuthStage() {
@@ -615,10 +679,11 @@ function render() {
 }
 
 function renderCreditCards() {
-  const totalLimit = creditCards.reduce((sum, card) => sum + card.limit, 0);
-  const totalUsed = creditCards.reduce((sum, card) => sum + card.used, 0);
-  const totalAvailable = creditCards.reduce((sum, card) => sum + card.available, 0);
-  const riskiestCard = [...creditCards].sort((a, b) => getCardUsagePercent(b) - getCardUsagePercent(a))[0];
+  const cards = activeCreditCards;
+  const totalLimit = cards.reduce((sum, card) => sum + card.limit, 0);
+  const totalUsed = cards.reduce((sum, card) => sum + card.used, 0);
+  const totalAvailable = cards.reduce((sum, card) => sum + card.available, 0);
+  const riskiestCard = [...cards].sort((a, b) => getCardUsagePercent(b) - getCardUsagePercent(a))[0];
 
   cardsLimitTotal.textContent = currency.format(totalLimit);
   cardsUsedTotal.textContent = currency.format(totalUsed);
@@ -629,7 +694,7 @@ function renderCreditCards() {
   cardsAvailableTotalPage.textContent = currency.format(totalAvailable);
   cardsRiskNamePage.textContent = riskiestCard ? riskiestCard.name : "-";
 
-  const creditCardMarkup = creditCards.map((card) => {
+  const creditCardMarkup = cards.length ? cards.map((card) => {
     const usedPercent = getCardUsagePercent(card);
     const isCritical = usedPercent >= 98 || card.status === "Critico";
     const limitLabel = card.limit > 0 ? `${Math.round(usedPercent)}% do limite usado` : "Limite nao cadastrado";
@@ -679,12 +744,17 @@ function renderCreditCards() {
         </ul>
       </article>
     `;
-  }).join("");
+  }).join("") : `
+    <div class="empty-state">
+      <strong>Nenhum cartao cadastrado.</strong>
+      <span>Cadastre seus limites e faturas para acompanhar risco, uso e vencimentos.</span>
+    </div>
+  `;
 
   creditCardList.innerHTML = creditCardMarkup;
   creditCardListPage.innerHTML = creditCardMarkup;
 
-  cardTimeline.innerHTML = creditCards.map((card) => {
+  cardTimeline.innerHTML = cards.length ? cards.map((card) => {
     return `
       <article class="timeline-card">
         <h3>${escapeHtml(card.name)}</h3>
@@ -699,7 +769,12 @@ function renderCreditCards() {
         `).join("")}
       </article>
     `;
-  }).join("");
+  }).join("") : `
+    <div class="empty-state">
+      <strong>Nenhuma fatura futura.</strong>
+      <span>A linha do tempo aparece depois que um cartao for cadastrado.</span>
+    </div>
+  `;
 }
 
 function getCardUsagePercent(card) {
@@ -885,7 +960,7 @@ billList.addEventListener("click", (event) => {
 });
 
 resetData?.addEventListener("click", () => {
-  bills = cloneInitialBills();
+  bills = activeBillsStorageKey === storageKey ? cloneInitialBills() : [];
   saveBills();
   render();
 });

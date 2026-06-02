@@ -104,7 +104,7 @@
           <a href="#dashboard">⚙ Configuracoes</a>
         </nav>
         <div class="side-profile">
-          <div class="profile-avatar">J</div>
+          <div class="profile-avatar" data-profile-initial>J</div>
           <div>
             <strong>Jefferson Lucio</strong>
             <span id="syncStatus">Modo local</span>
@@ -122,7 +122,7 @@
           <button class="icon-button" type="button" aria-label="Filtros">≡</button>
           <div class="profile-menu">
           <button class="profile-pill" id="profileMenuButton" type="button" aria-expanded="false" aria-controls="profileDropdown">
-            <span>J</span>
+            <span data-profile-initial>J</span>
             <strong>Jefferson</strong>
             <small>⌄</small>
           </button>
@@ -153,7 +153,7 @@
       <main>
       <section class="app-page active" data-page="dashboard">
       <section class="dashboard-hero" id="dashboard">
-        <h1>Ola, Jefferson Lucio!</h1>
+        <h1 id="dashboardGreeting">Ola, Jefferson Lucio!</h1>
         <p>Aqui esta o resumo da sua situacao financeira.</p>
       </section>
 
@@ -233,10 +233,10 @@
         <button class="primary-button" type="button">Configurar agora -></button>
       </section>
 
-      <section class="panel cards-panel" id="cartoes" aria-label="Cartoes do Jeff">
+      <section class="panel cards-panel" id="cartoes" aria-label="Cartoes">
         <div class="panel-heading">
           <div>
-            <h2>Cartoes do Jeff</h2>
+            <h2 id="cardsSectionTitle">Cartoes</h2>
             <p>Limite, uso atual, faturas e ate quando ainda existem cobranças.</p>
           </div>
         </div>
@@ -597,6 +597,6 @@
 
     <script src="supabase-config.js?v=35"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="app.js?v=38"></script>
+    <script src="app.js?v=39"></script>
   </body>
 </html>
