@@ -1,15 +1,22 @@
 const initialBills = [];
 
-const fixedIncome = 0;
+let fixedIncome = 0;
 const baseProjectionPeriod = { month: 4, year: 2026 };
 const legacyStorageKey = "jefferson-financas-bills";
 const storageKey = "organik-bills-empty-v1";
 const userBillsStoragePrefix = "organik-user-bills-empty-v1";
 const userCardsStoragePrefix = "organik-user-cards-empty-v1";
+const userProfileStoragePrefix = "organik-user-profile-v1";
 const periodStorageKey = "jefferson-financas-period";
 const sessionStorageKey = "jefferson-financas-session";
 const correctedBills = [];
 const creditCards = [];
+const defaultProfile = {
+  income: 0,
+  accounts: [],
+  budgets: [],
+  goals: []
+};
 const thirdPartyCards = [];
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -85,12 +92,41 @@ const cardsUsedTotalPage = document.querySelector("#cardsUsedTotalPage");
 const cardsAvailableTotalPage = document.querySelector("#cardsAvailableTotalPage");
 const cardsRiskNamePage = document.querySelector("#cardsRiskNamePage");
 const creditCardListPage = document.querySelector("#creditCardListPage");
+const dashboardExpandButton = document.querySelector("#dashboardExpandButton");
+const configureBudgetButton = document.querySelector("#configureBudgetButton");
+const addTransactionButton = document.querySelector("#addTransactionButton");
+const sortTransactionsButton = document.querySelector("#sortTransactionsButton");
+const exportButton = document.querySelector("#exportButton");
+const transactionsExpandButton = document.querySelector("#transactionsExpandButton");
+const newAccountButton = document.querySelector("#newAccountButton");
+const newCardButton = document.querySelector("#newCardButton");
+const addCategoryButton = document.querySelector("#addCategoryButton");
+const newGoalButton = document.querySelector("#newGoalButton");
+const settingsSaveButton = document.querySelector("#settingsSaveButton");
+const settingsCancelButton = document.querySelector("#settingsCancelButton");
+const actionModal = document.querySelector("#actionModal");
+const actionModalTitle = document.querySelector("#actionModalTitle");
+const actionModalText = document.querySelector("#actionModalText");
+const actionModalForm = document.querySelector("#actionModalForm");
+const modalCloseButton = document.querySelector("#modalCloseButton");
+const appToast = document.querySelector("#appToast");
+const accountsIncomeTotal = document.querySelector("#accountsIncomeTotal");
+const accountsBalanceTotal = document.querySelector("#accountsBalanceTotal");
+const mainAccountName = document.querySelector("#mainAccountName");
+const accountsCount = document.querySelector("#accountsCount");
+const accountsList = document.querySelector("#accountsList");
+const budgetList = document.querySelector("#budgetList");
+const goalsList = document.querySelector("#goalsList");
 
 let bills = loadBills();
 let supabaseClient = null;
 let selectedPeriod = getInitialPeriod();
 let activeBillsStorageKey = storageKey;
-let activeCreditCards = [...creditCards];
+let activeCardsStorageKey = `${userCardsStoragePrefix}-local`;
+let activeCreditCards = loadCreditCards(activeCardsStorageKey);
+let activeProfileStorageKey = `${userProfileStoragePrefix}-local`;
+let userProfile = loadProfile(activeProfileStorageKey);
+fixedIncome = userProfile.income;
 const urlParams = new URLSearchParams(window.location.search);
 const isAuthPopup = urlParams.has("authPopup");
 
@@ -98,6 +134,7 @@ setupPeriodPicker();
 setupSupabase();
 setupSession();
 setupPageNavigation();
+setupActionButtons();
 
 function loadBills(key = storageKey, options = {}) {
   const includeDefaults = options.includeDefaults ?? true;
@@ -118,6 +155,37 @@ function loadBills(key = storageKey, options = {}) {
 
 function saveBills() {
   localStorage.setItem(activeBillsStorageKey, JSON.stringify(bills));
+}
+
+function loadProfile(key) {
+  const saved = localStorage.getItem(key);
+  if (!saved) return cloneDefaultProfile();
+
+  try {
+    const parsed = JSON.parse(saved);
+    return {
+      ...cloneDefaultProfile(),
+      ...parsed,
+      accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
+      budgets: Array.isArray(parsed.budgets) ? parsed.budgets : [],
+      goals: Array.isArray(parsed.goals) ? parsed.goals : []
+    };
+  } catch {
+    return cloneDefaultProfile();
+  }
+}
+
+function saveProfile() {
+  localStorage.setItem(activeProfileStorageKey, JSON.stringify(userProfile));
+}
+
+function cloneDefaultProfile() {
+  return {
+    income: defaultProfile.income,
+    accounts: [],
+    budgets: [],
+    goals: []
+  };
 }
 
 function setupSupabase() {
@@ -159,6 +227,49 @@ function setupPageNavigation() {
   });
 }
 
+function setupActionButtons() {
+  dashboardExpandButton?.addEventListener("click", () => {
+    document.querySelector("#commitmentsSummary")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    showToast("Rolei para os compromissos atuais do mes.");
+  });
+  configureBudgetButton?.addEventListener("click", () => openActionModal(fixedIncome > 0 ? "budget" : "income"));
+  incomeTotal?.parentElement?.addEventListener("click", () => openActionModal("income"));
+  addTransactionButton?.addEventListener("click", () => openActionModal("transaction"));
+  newAccountButton?.addEventListener("click", () => openActionModal("account"));
+  newCardButton?.addEventListener("click", () => openActionModal("card"));
+  newGoalButton?.addEventListener("click", () => openActionModal("goal"));
+  addCategoryButton?.addEventListener("click", () => openActionModal("category"));
+  settingsSaveButton?.addEventListener("click", saveSettings);
+  settingsCancelButton?.addEventListener("click", () => {
+    updateProfileName(document.querySelector(".side-profile strong")?.textContent || "Usuario");
+    showToast("Alteracoes descartadas.");
+  });
+  sortTransactionsButton?.addEventListener("click", () => {
+    bills.sort((a, b) => b.amount - a.amount);
+    saveBills();
+    render();
+    showToast("Lancamentos ordenados pelo maior valor.");
+  });
+  exportButton?.addEventListener("click", exportFinancialData);
+  transactionsExpandButton?.addEventListener("click", () => openActionModal("transaction"));
+  modalCloseButton?.addEventListener("click", closeActionModal);
+  actionModal?.addEventListener("click", (event) => {
+    if (event.target === actionModal) closeActionModal();
+  });
+  actionModalForm?.addEventListener("submit", handleActionSubmit);
+  accountsList?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-delete-account]");
+    if (!button) return;
+    userProfile.accounts = userProfile.accounts.filter((account) => account.id !== button.dataset.deleteAccount);
+    saveProfile();
+    render();
+    showToast("Conta removida.");
+  });
+  document.querySelectorAll(".ai-card button").forEach((button) => {
+    button.addEventListener("click", () => showPage(button.textContent.includes("cart") ? "cartoes" : "dashboard"));
+  });
+}
+
 function showPage(pageName) {
   appPages.forEach((page) => {
     page.classList.toggle("active", page.dataset.page === pageName);
@@ -171,6 +282,242 @@ function showPage(pageName) {
   const activeLink = [...pageLinks].find((link) => link.dataset.pageLink === pageName);
   pageTitle.textContent = activeLink ? activeLink.textContent.replace("PRO", "").trim() : "Dashboard";
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openActionModal(type) {
+  const config = getModalConfig(type);
+  if (!config || !actionModal || !actionModalForm) return;
+
+  actionModal.dataset.type = type;
+  actionModalTitle.textContent = config.title;
+  actionModalText.textContent = config.text;
+  actionModalForm.innerHTML = config.fields + `
+    <div class="modal-actions">
+      <button class="secondary-button" type="button" data-close-modal>Cancelar</button>
+      <button class="primary-button" type="submit">${config.submit}</button>
+    </div>
+  `;
+  actionModalForm.querySelector("[data-close-modal]")?.addEventListener("click", closeActionModal);
+  actionModal.classList.remove("is-hidden");
+  actionModalForm.querySelector("input, select")?.focus();
+}
+
+function closeActionModal() {
+  actionModal?.classList.add("is-hidden");
+  if (actionModalForm) actionModalForm.innerHTML = "";
+}
+
+function getModalConfig(type) {
+  const moneyInput = (name, label, value = "") => `
+    <label>${label}<input name="${name}" inputmode="decimal" placeholder="0,00" value="${value}"></label>
+  `;
+  const configs = {
+    income: {
+      title: "Configurar renda",
+      text: "Informe quanto entra fixo por mes. Isso ajuda o Organik a medir o que esta comprometido.",
+      submit: "Salvar renda",
+      fields: moneyInput("income", "Renda fixa mensal")
+    },
+    budget: {
+      title: "Configurar orçamento",
+      text: "Crie um limite por categoria. Exemplo: alimentacao, moradia, lazer ou transporte.",
+      submit: "Salvar limite",
+      fields: `
+        <label>Categoria<input name="category" placeholder="Ex.: Alimentacao"></label>
+        ${moneyInput("limit", "Limite mensal")}
+        ${moneyInput("used", "Ja usado neste mes", "0,00")}
+      `
+    },
+    account: {
+      title: "Adicionar conta",
+      text: "Cadastre onde seu dinheiro fica: banco, carteira, caixa ou conta digital.",
+      submit: "Salvar conta",
+      fields: `
+        <label>Nome da conta<input name="name" placeholder="Ex.: Nubank, Caixa, Carteira"></label>
+        <label>Tipo<select name="type"><option>Banco</option><option>Carteira</option><option>Conta digital</option><option>Poupanca</option></select></label>
+        ${moneyInput("balance", "Saldo atual")}
+      `
+    },
+    card: {
+      title: "Adicionar cartão",
+      text: "Informe limite, usado e fatura. O Organik calcula risco e disponibilidade.",
+      submit: "Salvar cartao",
+      fields: `
+        <label>Nome do cartao<input name="name" placeholder="Ex.: Nubank"></label>
+        ${moneyInput("limit", "Limite total")}
+        ${moneyInput("used", "Valor usado")}
+        ${moneyInput("currentInvoice", "Fatura atual")}
+        <label>Ate quando existem parcelas?<input name="lastChargeMonth" placeholder="Ex.: Agosto/2026"></label>
+      `
+    },
+    transaction: {
+      title: "Adicionar transação",
+      text: "Registre uma conta, fatura ou parcela que sai do seu bolso.",
+      submit: "Salvar transacao",
+      fields: `
+        <label>Descricao<input name="name" placeholder="Ex.: Aluguel, feira, fatura"></label>
+        <label>Tipo<select name="type"><option>Conta fixa</option><option>Fatura</option><option>Parcelamento</option><option>Essencial</option><option>Outro</option></select></label>
+        ${moneyInput("amount", "Valor")}
+        <label>Parcelas restantes<input name="installments" inputmode="numeric" placeholder="Deixe vazio se for mensal"></label>
+      `
+    },
+    category: {
+      title: "Adicionar categoria",
+      text: "Categorias ajudam a entender para onde o dinheiro esta indo.",
+      submit: "Salvar categoria",
+      fields: `<label>Nome da categoria<input name="category" placeholder="Ex.: Saude, transporte"></label>`
+    },
+    goal: {
+      title: "Nova meta",
+      text: "Crie um objetivo financeiro simples para acompanhar seu progresso.",
+      submit: "Salvar meta",
+      fields: `
+        <label>Nome da meta<input name="name" placeholder="Ex.: Reserva de emergencia"></label>
+        ${moneyInput("target", "Valor da meta")}
+        ${moneyInput("saved", "Valor ja guardado", "0,00")}
+      `
+    }
+  };
+  return configs[type];
+}
+
+function handleActionSubmit(event) {
+  event.preventDefault();
+  const type = actionModal.dataset.type;
+  const formData = new FormData(actionModalForm);
+
+  if (type === "income") {
+    fixedIncome = parseMoney(formData.get("income"));
+    userProfile.income = fixedIncome;
+    saveProfile();
+    showToast("Renda fixa salva.");
+  }
+
+  if (type === "budget") {
+    userProfile.budgets.push({
+      id: crypto.randomUUID(),
+      category: String(formData.get("category")).trim() || "Categoria",
+      limit: parseMoney(formData.get("limit")),
+      used: parseMoney(formData.get("used"))
+    });
+    saveProfile();
+    showToast("Limite de gasto cadastrado.");
+  }
+
+  if (type === "account") {
+    userProfile.accounts.push({
+      id: crypto.randomUUID(),
+      name: String(formData.get("name")).trim() || "Conta",
+      type: String(formData.get("type")),
+      balance: parseMoney(formData.get("balance"))
+    });
+    saveProfile();
+    showToast("Conta cadastrada.");
+  }
+
+  if (type === "card") {
+    const limit = parseMoney(formData.get("limit"));
+    const used = parseMoney(formData.get("used"));
+    activeCreditCards.push({
+      name: String(formData.get("name")).trim() || "Cartao",
+      limit,
+      used,
+      available: Math.max(limit - used, 0),
+      currentInvoice: parseMoney(formData.get("currentInvoice")),
+      openInvoice: 0,
+      futureInvoices: 0,
+      lastChargeMonth: String(formData.get("lastChargeMonth")).trim() || "A definir",
+      status: used >= limit && limit > 0 ? "Critico" : "Controle",
+      note: "Cartao cadastrado manualmente.",
+      purchases: [],
+      invoices: []
+    });
+    saveCreditCards();
+    showToast("Cartao cadastrado.");
+  }
+
+  if (type === "transaction") {
+    const amount = parseMoney(formData.get("amount"));
+    if (amount <= 0) {
+      showToast("Informe um valor maior que zero.");
+      return;
+    }
+    const installments = Number(formData.get("installments"));
+    bills.push({
+      id: crypto.randomUUID(),
+      name: String(formData.get("name")).trim() || "Transacao",
+      type: String(formData.get("type")),
+      amount,
+      startMonth: getSelectedPeriod().month,
+      startYear: getSelectedPeriod().year,
+      ...(installments > 0 ? { installmentsLeft: installments } : {})
+    });
+    saveBills();
+    showToast("Transacao cadastrada.");
+  }
+
+  if (type === "category") {
+    showToast(`Categoria "${String(formData.get("category")).trim() || "nova"}" criada para uso futuro.`);
+  }
+
+  if (type === "goal") {
+    userProfile.goals.push({
+      id: crypto.randomUUID(),
+      name: String(formData.get("name")).trim() || "Meta",
+      target: parseMoney(formData.get("target")),
+      saved: parseMoney(formData.get("saved"))
+    });
+    saveProfile();
+    showToast("Meta cadastrada.");
+  }
+
+  closeActionModal();
+  render();
+}
+
+function parseMoney(value) {
+  const normalized = String(value ?? "")
+    .replace(/\s/g, "")
+    .replace("R$", "")
+    .replace(/\./g, "")
+    .replace(",", ".");
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function saveSettings() {
+  const settingsNameInput = document.querySelector("#settingsNameInput");
+  const name = settingsNameInput?.value?.trim();
+  if (name) updateProfileName(name);
+  showToast("Configuracoes salvas.");
+}
+
+function exportFinancialData() {
+  const payload = {
+    renda: fixedIncome,
+    contas: userProfile.accounts,
+    compromissos: bills,
+    cartoes: activeCreditCards,
+    limites: userProfile.budgets,
+    metas: userProfile.goals,
+    exportadoEm: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "organik-dados.json";
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast("Exportacao gerada.");
+}
+
+function showToast(message) {
+  if (!appToast) return;
+  appToast.textContent = message;
+  appToast.classList.remove("is-hidden");
+  window.clearTimeout(showToast.timeout);
+  showToast.timeout = window.setTimeout(() => appToast.classList.add("is-hidden"), 2600);
 }
 
 async function setupSession() {
@@ -324,7 +671,11 @@ function setAuthenticated(isAuthenticated, user = null) {
   if (!isAuthenticated) {
     loginScreen.classList.remove("is-auth-open");
     activeBillsStorageKey = storageKey;
-    activeCreditCards = [...creditCards];
+    activeCardsStorageKey = `${userCardsStoragePrefix}-local`;
+    activeProfileStorageKey = `${userProfileStoragePrefix}-local`;
+    userProfile = loadProfile(activeProfileStorageKey);
+    fixedIncome = userProfile.income;
+    activeCreditCards = loadCreditCards(activeCardsStorageKey);
   }
   if (isAuthenticated && user) {
     loadUserFinancialData(user);
@@ -380,12 +731,20 @@ function loadUserFinancialData(user) {
   if (!user?.id) return;
 
   activeBillsStorageKey = `${userBillsStoragePrefix}-${user.id}`;
+  activeCardsStorageKey = `${userCardsStoragePrefix}-${user.id}`;
+  activeProfileStorageKey = `${userProfileStoragePrefix}-${user.id}`;
   bills = loadBills(activeBillsStorageKey, { includeDefaults: false });
   activeCreditCards = loadUserCreditCards(user.id);
+  userProfile = loadProfile(activeProfileStorageKey);
+  fixedIncome = userProfile.income;
 }
 
 function loadUserCreditCards(userId) {
-  const saved = localStorage.getItem(`${userCardsStoragePrefix}-${userId}`);
+  return loadCreditCards(`${userCardsStoragePrefix}-${userId}`);
+}
+
+function loadCreditCards(key) {
+  const saved = localStorage.getItem(key);
   if (!saved) return [];
 
   try {
@@ -394,6 +753,10 @@ function loadUserCreditCards(userId) {
   } catch {
     return [];
   }
+}
+
+function saveCreditCards() {
+  localStorage.setItem(activeCardsStorageKey, JSON.stringify(activeCreditCards));
 }
 
 function showAuthStage() {
@@ -526,6 +889,9 @@ function render() {
     : "Faltante estimado antes de outras contas.";
   commitmentsSummary.textContent = `${projectedBills.length} compromissos reais neste mes - total ${currency.format(total)}`;
   renderCreditCards();
+  renderAccounts();
+  renderBudgets();
+  renderGoals();
   renderDiagnosis(total, balance, committedPercent, projectedBills.length);
   renderInsightCharts(projectedBills, total, balance, committedPercent);
   renderThirdPartyTable();
@@ -689,6 +1055,68 @@ function renderCreditCards() {
 
 function getCardUsagePercent(card) {
   return card.limit > 0 ? (card.used / card.limit) * 100 : 0;
+}
+
+function renderAccounts() {
+  if (accountsIncomeTotal) accountsIncomeTotal.textContent = currency.format(fixedIncome);
+  const totalBalance = userProfile.accounts.reduce((sum, account) => sum + account.balance, 0);
+  if (accountsBalanceTotal) accountsBalanceTotal.textContent = currency.format(totalBalance);
+  if (mainAccountName) mainAccountName.textContent = userProfile.accounts[0]?.name || "A definir";
+  if (accountsCount) accountsCount.textContent = String(userProfile.accounts.length);
+
+  if (!accountsList) return;
+  accountsList.innerHTML = userProfile.accounts.length ? userProfile.accounts.map((account) => `
+    <article class="credit-card-item compact-item">
+      <div class="credit-card-top">
+        <div>
+          <h3>${escapeHtml(account.name)}</h3>
+          <span class="credit-card-label">${escapeHtml(account.type)}</span>
+        </div>
+        <strong>${currency.format(account.balance)}</strong>
+      </div>
+      <button class="delete-button" type="button" data-delete-account="${account.id}" title="Remover conta">x</button>
+    </article>
+  `).join("") : `
+    <div class="empty-state">
+      <strong>Nenhuma conta cadastrada.</strong>
+      <span>Clique em Nova conta para informar onde seu dinheiro entra ou fica guardado.</span>
+    </div>
+  `;
+}
+
+function renderBudgets() {
+  if (!budgetList) return;
+  budgetList.innerHTML = userProfile.budgets.length ? userProfile.budgets.map((budget) => {
+    const percent = budget.limit > 0 ? Math.min((budget.used / budget.limit) * 100, 100) : 0;
+    return `
+      <div class="budget-row">
+        <span>${escapeHtml(budget.category)}</span>
+        <strong>${currency.format(budget.used)} / ${currency.format(budget.limit)}</strong>
+        <div><i style="width:${percent}%"></i></div>
+      </div>
+    `;
+  }).join("") : `
+    <div class="empty-state">
+      <strong>Nenhum limite configurado.</strong>
+      <span>Defina limites simples, como alimentacao, moradia ou lazer.</span>
+    </div>
+  `;
+}
+
+function renderGoals() {
+  if (!goalsList) return;
+  goalsList.innerHTML = userProfile.goals.length ? userProfile.goals.map((goal) => {
+    const percent = goal.target > 0 ? Math.min((goal.saved / goal.target) * 100, 100) : 0;
+    return `
+      <div class="panel goal-card">
+        <strong>${escapeHtml(goal.name)}</strong>
+        <p>${currency.format(goal.saved)} guardados de ${currency.format(goal.target)}.</p>
+        <div class="limit-track"><div class="limit-fill" style="width:${percent}%"></div></div>
+      </div>
+    `;
+  }).join("") : `
+    <div class="empty-state"><strong>Nenhuma meta cadastrada.</strong><span>Crie uma meta para acompanhar quanto falta guardar.</span></div>
+  `;
 }
 
 function renderDiagnosis(total, balance, committedPercent, activeCount) {
@@ -871,8 +1299,14 @@ billList.addEventListener("click", (event) => {
 
 resetData?.addEventListener("click", () => {
   bills = activeBillsStorageKey === storageKey ? cloneInitialBills() : [];
+  userProfile = cloneDefaultProfile();
+  fixedIncome = 0;
+  activeCreditCards = [];
   saveBills();
+  saveProfile();
+  saveCreditCards();
   render();
+  showToast("Todos os cadastros foram zerados.");
 });
 
 function cloneInitialBills() {

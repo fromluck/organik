@@ -186,7 +186,7 @@
             </div>
           </div>
         </div>
-        <button class="secondary-button" type="button">Expandir</button>
+        <button class="secondary-button" id="dashboardExpandButton" type="button">Expandir</button>
       </div>
 
       <section class="summary-grid" aria-label="Resumo financeiro">
@@ -230,7 +230,7 @@
           <h2>Configure seu orcamento</h2>
           <p>Informe metas de gasto e acompanhe o quanto ainda pode usar no dia, na semana e no mes.</p>
         </div>
-        <button class="primary-button" type="button">Configurar agora -></button>
+        <button class="primary-button" id="configureBudgetButton" type="button">Configurar agora -></button>
       </section>
 
       <section class="panel cards-panel" id="cartoes" aria-label="Cartoes">
@@ -362,7 +362,7 @@
           </summary>
 
           <div class="commitment-tools">
-            <button class="secondary-button" id="resetData" type="button">Restaurar dados iniciais</button>
+            <button class="secondary-button" id="resetData" type="button">Limpar cadastros</button>
           </div>
           <div class="bill-list" id="billList"></div>
         </details>
@@ -377,9 +377,9 @@
             <p>Registre tudo que entrou e saiu, com filtros rapidos por periodo e tipo.</p>
           </div>
           <div class="transaction-actions">
-            <button class="secondary-button" type="button">Ordenar</button>
-            <button class="secondary-button" type="button">Exportar</button>
-            <button class="primary-button" type="button">+ Adicionar Transacao</button>
+            <button class="secondary-button" id="sortTransactionsButton" type="button">Ordenar</button>
+            <button class="secondary-button" id="exportButton" type="button">Exportar</button>
+            <button class="primary-button" id="addTransactionButton" type="button">+ Adicionar Transacao</button>
           </div>
         </div>
 
@@ -396,7 +396,7 @@
           <article><span class="metric-icon income-icon">◎</span><div><span>Balanco</span><strong class="positive-value">R$ 0,00</strong></div></article>
         </div>
 
-        <button class="expand-button" type="button">⌄ Expandir</button>
+        <button class="expand-button" id="transactionsExpandButton" type="button">⌄ Expandir</button>
 
         <div class="transaction-filter-bar">
           <div class="pill-tabs">
@@ -461,13 +461,14 @@
       </section>
 
       <section class="app-page" data-page="contas">
-        <div class="page-heading"><div><h1>Contas</h1><p>Origem do dinheiro e saldos manuais.</p></div><button class="primary-button" type="button">+ Nova conta</button></div>
+        <div class="page-heading"><div><h1>Contas</h1><p>Origem do dinheiro e saldos manuais.</p></div><button class="primary-button" id="newAccountButton" type="button">+ Nova conta</button></div>
         <div class="cards-summary-grid">
-          <div><span>Salario fixo</span><strong>R$ 0,00</strong></div>
-          <div><span>Carteira</span><strong>R$ 0,00</strong></div>
-          <div><span>Banco principal</span><strong>A definir</strong></div>
-          <div><span>Transferencias</span><strong>Em breve</strong></div>
+          <div><span>Salario fixo</span><strong id="accountsIncomeTotal">R$ 0,00</strong></div>
+          <div><span>Total em contas</span><strong id="accountsBalanceTotal">R$ 0,00</strong></div>
+          <div><span>Banco principal</span><strong id="mainAccountName">A definir</strong></div>
+          <div><span>Contas cadastradas</span><strong id="accountsCount">0</strong></div>
         </div>
+        <div class="credit-card-list" id="accountsList"></div>
       </section>
 
       <section class="app-page" data-page="categorias">
@@ -476,7 +477,7 @@
             <h1>Categorias</h1>
             <p>Gerencie suas categorias de receitas e despesas.</p>
           </div>
-          <button class="primary-button compact-action" type="button">+ Adicionar categoria</button>
+          <button class="primary-button compact-action" id="addCategoryButton" type="button">+ Adicionar categoria</button>
         </div>
         <div class="category-tabs">
           <button class="active" type="button">Categorias <strong>25</strong></button>
@@ -512,7 +513,7 @@
       </section>
 
       <section class="app-page" data-page="cartoes">
-        <div class="page-heading"><div><h1>Cartoes</h1><p>Limites, faturas, compras e ate quando ainda existem parcelas.</p></div></div>
+        <div class="page-heading"><div><h1>Cartoes</h1><p>Limites, faturas, compras e ate quando ainda existem parcelas.</p></div><button class="primary-button" id="newCardButton" type="button">+ Novo cartao</button></div>
         <div class="cards-summary-grid">
           <div><span>Limite total</span><strong id="cardsLimitTotalPage">R$ 0,00</strong></div>
           <div><span>Usado</span><strong id="cardsUsedTotalPage">R$ 0,00</strong></div>
@@ -533,7 +534,7 @@
 
       <section class="app-page" data-page="limites">
         <div class="page-heading"><div><h1>Limites de gastos</h1><p>Controle preventivo por categoria.</p></div></div>
-        <div class="budget-list">
+        <div class="budget-list" id="budgetList">
           <div class="budget-row"><span>Alimentacao</span><strong>R$ 0 / R$ 0</strong><div><i style="width:0%"></i></div></div>
           <div class="budget-row"><span>Moradia</span><strong>R$ 0 / R$ 0</strong><div><i style="width:0%"></i></div></div>
           <div class="budget-row"><span>Cartoes</span><strong>R$ 0 / R$ 0</strong><div><i style="width:0%"></i></div></div>
@@ -541,8 +542,8 @@
       </section>
 
       <section class="app-page" data-page="metas">
-        <div class="page-heading"><div><h1>Metas</h1><p>Objetivos financeiros com previsao simples.</p></div><button class="primary-button" type="button">+ Nova meta</button></div>
-        <div class="empty-state"><strong>Nenhuma meta cadastrada.</strong><span>Crie uma meta para acompanhar quanto falta guardar.</span></div>
+        <div class="page-heading"><div><h1>Metas</h1><p>Objetivos financeiros com previsao simples.</p></div><button class="primary-button" id="newGoalButton" type="button">+ Nova meta</button></div>
+        <div id="goalsList"><div class="empty-state"><strong>Nenhuma meta cadastrada.</strong><span>Crie uma meta para acompanhar quanto falta guardar.</span></div></div>
       </section>
 
       <section class="app-page" data-page="investimentos">
@@ -586,8 +587,8 @@
               <label>Moeda<select><option>Real brasileiro (BRL)</option></select></label>
             </div>
             <div class="settings-actions">
-              <button class="secondary-button" type="button">Cancelar</button>
-              <button class="primary-button" type="button">Salvar alteracoes</button>
+              <button class="secondary-button" id="settingsCancelButton" type="button">Cancelar</button>
+              <button class="primary-button" id="settingsSaveButton" type="button">Salvar alteracoes</button>
             </div>
           </section>
         </div>
@@ -595,8 +596,18 @@
       </main>
     </div>
 
+    <div class="modal-backdrop is-hidden" id="actionModal" role="dialog" aria-modal="true" aria-labelledby="actionModalTitle">
+      <div class="modal-card">
+        <button class="modal-close" id="modalCloseButton" type="button" aria-label="Fechar">x</button>
+        <h2 id="actionModalTitle">Cadastro</h2>
+        <p id="actionModalText">Preencha os dados para organizar sua vida financeira.</p>
+        <form id="actionModalForm"></form>
+      </div>
+    </div>
+    <div class="toast is-hidden" id="appToast" role="status"></div>
+
     <script src="supabase-config.js?v=35"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="app.js?v=44"></script>
+    <script src="app.js?v=46"></script>
   </body>
 </html>

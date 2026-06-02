@@ -2238,6 +2238,98 @@ select {
   padding: 0 0.8rem;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(10, 18, 15, 0.38);
+}
+
+.modal-card {
+  width: min(100%, 34rem);
+  max-height: calc(100vh - 3rem);
+  overflow: auto;
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 24px 70px rgba(16, 24, 20, 0.22);
+  padding: 1.5rem;
+}
+
+.modal-card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.45rem;
+}
+
+.modal-card p {
+  margin: 0 0 1.2rem;
+  color: var(--muted);
+}
+
+.modal-card form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.modal-card label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.modal-card input,
+.modal-card select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.85rem 0.9rem;
+  color: var(--ink);
+  font: inherit;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  cursor: pointer;
+}
+
+.toast {
+  position: fixed;
+  right: 1.3rem;
+  bottom: 1.3rem;
+  z-index: 60;
+  max-width: min(24rem, calc(100vw - 2rem));
+  border-radius: 8px;
+  background: var(--green-dark);
+  color: white;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 16px 44px rgba(16, 24, 20, 0.22);
+  font-weight: 700;
+}
+
+.compact-item {
+  position: relative;
+}
+
 .commitment-tools {
   display: flex;
   justify-content: flex-end;
