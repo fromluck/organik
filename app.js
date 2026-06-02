@@ -93,6 +93,7 @@ const cardsAvailableTotalPage = document.querySelector("#cardsAvailableTotalPage
 const cardsRiskNamePage = document.querySelector("#cardsRiskNamePage");
 const creditCardListPage = document.querySelector("#creditCardListPage");
 const dashboardExpandButton = document.querySelector("#dashboardExpandButton");
+const dashboardExtra = document.querySelector("#dashboardExtra");
 const configureBudgetButton = document.querySelector("#configureBudgetButton");
 const addTransactionButton = document.querySelector("#addTransactionButton");
 const sortTransactionsButton = document.querySelector("#sortTransactionsButton");
@@ -229,8 +230,9 @@ function setupPageNavigation() {
 
 function setupActionButtons() {
   dashboardExpandButton?.addEventListener("click", () => {
-    document.querySelector("#commitmentsSummary")?.scrollIntoView({ behavior: "smooth", block: "center" });
-    showToast("Rolei para os compromissos atuais do mes.");
+    const isHidden = dashboardExtra?.classList.toggle("is-hidden");
+    dashboardExpandButton.textContent = isHidden ? "Expandir" : "Recolher";
+    showToast(isHidden ? "Resumo recolhido." : "Proximos passos abertos.");
   });
   configureBudgetButton?.addEventListener("click", () => openActionModal(fixedIncome > 0 ? "budget" : "income"));
   incomeTotal?.parentElement?.addEventListener("click", () => openActionModal("income"));
@@ -267,6 +269,9 @@ function setupActionButtons() {
   });
   document.querySelectorAll(".ai-card button").forEach((button) => {
     button.addEventListener("click", () => showPage(button.textContent.includes("cart") ? "cartoes" : "dashboard"));
+  });
+  document.querySelectorAll("[data-open-action]").forEach((button) => {
+    button.addEventListener("click", () => openActionModal(button.dataset.openAction));
   });
 }
 

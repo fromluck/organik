@@ -233,6 +233,24 @@
         <button class="primary-button" id="configureBudgetButton" type="button">Configurar agora -></button>
       </section>
 
+      <section class="dashboard-extra is-hidden" id="dashboardExtra">
+        <article>
+          <strong>1. Informe sua renda</strong>
+          <span>Comece dizendo quanto entra todo mes.</span>
+          <button class="secondary-button" type="button" data-open-action="income">Adicionar renda</button>
+        </article>
+        <article>
+          <strong>2. Cadastre uma conta</strong>
+          <span>Registre banco, carteira ou conta digital.</span>
+          <button class="secondary-button" type="button" data-open-action="account">Adicionar conta</button>
+        </article>
+        <article>
+          <strong>3. Cadastre compromissos</strong>
+          <span>Informe aluguel, fatura, parcelas ou contas fixas.</span>
+          <button class="secondary-button" type="button" data-open-action="transaction">Adicionar compromisso</button>
+        </article>
+      </section>
+
       <section class="panel cards-panel" id="cartoes" aria-label="Cartoes">
         <div class="panel-heading">
           <div>
@@ -608,6 +626,6 @@
 
     <script src="supabase-config.js?v=35"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="app.js?v=46"></script>
+    <script src="app.js?v=47"></script>
   </body>
 </html>
