@@ -193,6 +193,8 @@ const creditCardListPage = document.querySelector("#creditCardListPage");
 let bills = loadBills();
 let supabaseClient = null;
 let selectedPeriod = getInitialPeriod();
+const urlParams = new URLSearchParams(window.location.search);
+const isAuthPopup = urlParams.has("authPopup");
 
 setupPeriodPicker();
 setupSupabase();
@@ -274,9 +276,17 @@ function showPage(pageName) {
 async function setupSession() {
   if (supabaseClient) {
     const { data } = await supabaseClient.auth.getSession();
+    if (isAuthPopup) {
+      handleAuthPopupSession(data.session);
+      return;
+    }
     setAuthenticated(Boolean(data.session), data.session?.user);
 
     supabaseClient.auth.onAuthStateChange((_event, session) => {
+      if (isAuthPopup) {
+        handleAuthPopupSession(session);
+        return;
+      }
       setAuthenticated(Boolean(session), session?.user);
     });
   } else {
@@ -305,6 +315,15 @@ async function setupSession() {
 
   googleLoginButton?.addEventListener("click", signInWithGoogle);
 
+  window.addEventListener("message", async (event) => {
+    if (event.origin !== window.location.origin || event.data?.type !== "organik-auth-complete") return;
+    if (!supabaseClient) return;
+
+    const { data } = await supabaseClient.auth.getSession();
+    setAuthenticated(Boolean(data.session), data.session?.user);
+    setAuthStatus(data.session ? "Login concluido." : "Login concluido. Atualize a pagina se necessario.");
+  });
+
   logoutButton.addEventListener("click", signOut);
 
   profileLogoutButton.addEventListener("click", signOut);
@@ -328,17 +347,55 @@ async function signInWithGoogle() {
     return;
   }
 
-  setAuthStatus("Abrindo login do Google...");
-  const { error } = await supabaseClient.auth.signInWithOAuth({
+  const redirectUrl = new URL(window.location.origin + window.location.pathname);
+  redirectUrl.searchParams.set("authPopup", "1");
+
+  setAuthStatus("Abrindo janela do Google...");
+  const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin + window.location.pathname
+      redirectTo: redirectUrl.href,
+      skipBrowserRedirect: true
     }
   });
 
   if (error) {
     setAuthStatus(error.message);
+    return;
   }
+
+  const popup = window.open(
+    data.url,
+    "organikGoogleLogin",
+    "width=520,height=680,left=120,top=80,menubar=no,toolbar=no,location=yes,status=no"
+  );
+
+  if (!popup) {
+    setAuthStatus("Permita popups ou continue na aba atual.");
+    window.location.href = data.url;
+    return;
+  }
+
+  popup.focus();
+  const popupCheck = window.setInterval(() => {
+    if (!popup.closed) return;
+    window.clearInterval(popupCheck);
+    setAuthStatus("Se o login foi concluido, carregando sua conta...");
+    supabaseClient.auth.getSession().then(({ data: sessionData }) => {
+      setAuthenticated(Boolean(sessionData.session), sessionData.session?.user);
+    });
+  }, 800);
+}
+
+function handleAuthPopupSession(session) {
+  if (!session) {
+    setAuthStatus("Finalizando login...");
+    return;
+  }
+
+  window.opener?.postMessage({ type: "organik-auth-complete" }, window.location.origin);
+  document.body.innerHTML = "<main style=\"font-family:Poppins,Arial,sans-serif;display:grid;min-height:100vh;place-items:center;color:#0f1715\">Login concluido. Fechando janela...</main>";
+  window.setTimeout(() => window.close(), 600);
 }
 
 async function signOut() {
