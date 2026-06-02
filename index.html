@@ -36,7 +36,7 @@
         <div class="auth-stage is-hidden" id="acesso">
           <form class="auth-panel" id="loginForm">
             <strong class="auth-logo">Organik</strong>
-            <input id="loginName" name="name" type="hidden" value="Jefferson Lucio">
+            <input id="loginName" name="name" type="hidden" value="Usuario">
             <input id="loginPassword" name="password" type="hidden" value="local">
             <button class="auth-button" id="googleLoginButton" type="button">
               <span class="auth-icon google-icon" aria-hidden="true">
@@ -104,9 +104,9 @@
           <a href="#dashboard">⚙ Configuracoes</a>
         </nav>
         <div class="side-profile">
-          <div class="profile-avatar" data-profile-initial>J</div>
+          <div class="profile-avatar" data-profile-initial>U</div>
           <div>
-            <strong>Jefferson Lucio</strong>
+            <strong>Usuario</strong>
             <span id="syncStatus">Modo local</span>
           </div>
         </div>
@@ -122,8 +122,8 @@
           <button class="icon-button" type="button" aria-label="Filtros">≡</button>
           <div class="profile-menu">
           <button class="profile-pill" id="profileMenuButton" type="button" aria-expanded="false" aria-controls="profileDropdown">
-            <span data-profile-initial>J</span>
-            <strong>Jefferson</strong>
+            <span data-profile-initial>U</span>
+            <strong>Usuario</strong>
             <small>⌄</small>
           </button>
           <div class="profile-dropdown is-hidden" id="profileDropdown">
@@ -153,7 +153,7 @@
       <main>
       <section class="app-page active" data-page="dashboard">
       <section class="dashboard-hero" id="dashboard">
-        <h1 id="dashboardGreeting">Ola, Jefferson Lucio!</h1>
+        <h1 id="dashboardGreeting">Ola, Usuario!</h1>
         <p>Aqui esta o resumo da sua situacao financeira.</p>
       </section>
 
@@ -463,7 +463,7 @@
       <section class="app-page" data-page="contas">
         <div class="page-heading"><div><h1>Contas</h1><p>Origem do dinheiro e saldos manuais.</p></div><button class="primary-button" type="button">+ Nova conta</button></div>
         <div class="cards-summary-grid">
-          <div><span>Salario fixo</span><strong>R$ 4.926,69</strong></div>
+          <div><span>Salario fixo</span><strong>R$ 0,00</strong></div>
           <div><span>Carteira</span><strong>R$ 0,00</strong></div>
           <div><span>Banco principal</span><strong>A definir</strong></div>
           <div><span>Transferencias</span><strong>Em breve</strong></div>
@@ -525,24 +525,24 @@
       <section class="app-page" data-page="organik-ia">
         <div class="page-heading"><div><h1>Organik IA</h1><p>Analises automaticas para agir antes do problema crescer.</p></div></div>
         <div class="ai-grid">
-          <article class="panel ai-card"><strong>Cartoes quase sem limite</strong><p>Nubank, C6 e Facil Visa estao acima de 95% de uso.</p><button class="secondary-button">Ver cartoes</button></article>
-          <article class="panel ai-card"><strong>Mes critico</strong><p>Com os dados atuais, falta dinheiro para fechar o mes.</p><button class="secondary-button">Ver diagnostico</button></article>
-          <article class="panel ai-card"><strong>Parcelas futuras</strong><p>Existem cobrancas previstas ate outubro de 2026.</p><button class="secondary-button">Ver projecao</button></article>
+          <article class="panel ai-card"><strong>Nenhuma analise ainda</strong><p>Cadastre receitas, contas e cartoes para receber alertas automaticos.</p><button class="secondary-button">Ver dashboard</button></article>
+          <article class="panel ai-card"><strong>Diagnostico vazio</strong><p>O Organik calcula a gravidade depois dos primeiros lancamentos.</p><button class="secondary-button">Ver diagnostico</button></article>
+          <article class="panel ai-card"><strong>Sem parcelas futuras</strong><p>As projecoes aparecem quando houver parcelamentos ou faturas cadastradas.</p><button class="secondary-button">Ver projecao</button></article>
         </div>
       </section>
 
       <section class="app-page" data-page="limites">
         <div class="page-heading"><div><h1>Limites de gastos</h1><p>Controle preventivo por categoria.</p></div></div>
         <div class="budget-list">
-          <div class="budget-row"><span>Alimentacao</span><strong>R$ 550 / R$ 800</strong><div><i style="width:69%"></i></div></div>
-          <div class="budget-row"><span>Moradia</span><strong>R$ 770 / R$ 900</strong><div><i style="width:86%"></i></div></div>
-          <div class="budget-row"><span>Cartoes</span><strong>Alerta maximo</strong><div><i style="width:96%"></i></div></div>
+          <div class="budget-row"><span>Alimentacao</span><strong>R$ 0 / R$ 0</strong><div><i style="width:0%"></i></div></div>
+          <div class="budget-row"><span>Moradia</span><strong>R$ 0 / R$ 0</strong><div><i style="width:0%"></i></div></div>
+          <div class="budget-row"><span>Cartoes</span><strong>R$ 0 / R$ 0</strong><div><i style="width:0%"></i></div></div>
         </div>
       </section>
 
       <section class="app-page" data-page="metas">
         <div class="page-heading"><div><h1>Metas</h1><p>Objetivos financeiros com previsao simples.</p></div><button class="primary-button" type="button">+ Nova meta</button></div>
-        <div class="panel goal-card"><strong>Reserva de emergencia</strong><p>Se guardar R$ 300 por mes, em 12 meses voce tera R$ 3.600.</p></div>
+        <div class="empty-state"><strong>Nenhuma meta cadastrada.</strong><span>Crie uma meta para acompanhar quanto falta guardar.</span></div>
       </section>
 
       <section class="app-page" data-page="investimentos">
@@ -571,17 +571,17 @@
           </aside>
           <section class="settings-panel">
             <div class="settings-profile">
-              <span>J</span>
+              <span data-profile-initial>U</span>
               <div>
-                <h2>Jefferson Lucio</h2>
-                <p>Organik em modo local. Seus dados ficam salvos neste navegador.</p>
+                <h2 data-settings-profile-name>Usuario</h2>
+                <p>Seus dados ficam salvos neste navegador e vinculados ao seu login quando conectado.</p>
               </div>
             </div>
             <div class="settings-grid">
-              <label>Nome completo<input type="text" value="Jefferson Lucio"></label>
+              <label>Nome completo<input id="settingsNameInput" type="text" value=""></label>
               <label>Email<input type="email" placeholder="seuemail@exemplo.com"></label>
               <label>Telefone<input type="tel" placeholder="(00) 00000-0000"></label>
-              <label>Senha<input type="password" value="organik123"></label>
+              <label>Senha<input type="password" value=""></label>
               <label>Tema<select><option>Claro</option><option>Escuro</option><option>Sistema</option></select></label>
               <label>Moeda<select><option>Real brasileiro (BRL)</option></select></label>
             </div>
@@ -597,6 +597,6 @@
 
     <script src="supabase-config.js?v=35"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="app.js?v=39"></script>
+    <script src="app.js?v=41"></script>
   </body>
 </html>

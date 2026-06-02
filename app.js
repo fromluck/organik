@@ -1,125 +1,15 @@
-const initialBills = [
-  { id: crypto.randomUUID(), name: "Nubank - fatura vencida", type: "Fatura", amount: 1073.70, startMonth: 4, startYear: 2026, installmentsLeft: 1 },
-  { id: crypto.randomUUID(), name: "C6 - fatura fechada", type: "Fatura", amount: 411.88, startMonth: 5, startYear: 2026, installmentsLeft: 1 },
-  { id: crypto.randomUUID(), name: "Facil Visa - fatura fechada", type: "Fatura", amount: 559.56, startMonth: 5, startYear: 2026, installmentsLeft: 1 },
-  { id: crypto.randomUUID(), name: "Airsoft", type: "Pago hoje", amount: 400.00, startMonth: 4, startYear: 2026, installmentsLeft: 1 },
-  { id: crypto.randomUUID(), name: "Celular - parcela paga hoje", type: "Pago hoje", amount: 470.00, startMonth: 4, startYear: 2026, installmentsLeft: 1 },
-  { id: crypto.randomUUID(), name: "Celular - parcelas restantes", type: "Parcelamento", amount: 470.00, startMonth: 5, startYear: 2026, installmentsLeft: 3 },
-  { id: crypto.randomUUID(), name: "Alimentacao / feira", type: "Essencial", amount: 550.00, startMonth: 4, startYear: 2026 },
-  { id: crypto.randomUUID(), name: "Aluguel", type: "Conta fixa", amount: 350.00, startMonth: 4, startYear: 2026 },
-  { id: crypto.randomUUID(), name: "Energia", type: "Conta fixa", amount: 200.00, startMonth: 4, startYear: 2026 },
-  { id: crypto.randomUUID(), name: "Internet", type: "Conta fixa", amount: 120.00, startMonth: 4, startYear: 2026 },
-  { id: crypto.randomUUID(), name: "Agua", type: "Conta fixa", amount: 56.00, startMonth: 4, startYear: 2026 },
-  { id: crypto.randomUUID(), name: "Internet do celular", type: "Conta fixa", amount: 44.00, startMonth: 4, startYear: 2026 },
-  { id: crypto.randomUUID(), name: "Caixa - fatura completa", type: "Fatura", amount: 1188.76, startMonth: 4, startYear: 2026, installmentsLeft: 1 }
-];
+const initialBills = [];
 
-const fixedIncome = 4926.69;
+const fixedIncome = 0;
 const baseProjectionPeriod = { month: 4, year: 2026 };
 const legacyStorageKey = "jefferson-financas-bills";
-const storageKey = "jefferson-financas-bills-v2";
-const userBillsStoragePrefix = "organik-user-bills";
-const userCardsStoragePrefix = "organik-user-cards";
+const storageKey = "organik-bills-empty-v1";
+const userBillsStoragePrefix = "organik-user-bills-empty-v1";
+const userCardsStoragePrefix = "organik-user-cards-empty-v1";
 const periodStorageKey = "jefferson-financas-period";
 const sessionStorageKey = "jefferson-financas-session";
 const correctedBills = [];
-const creditCards = [
-  {
-    name: "Nubank",
-    limit: 3300.00,
-    available: 2.09,
-    used: 3297.91,
-    currentInvoice: 1073.70,
-    openInvoice: 885.42,
-    futureInvoices: 1338.79,
-    lastChargeMonth: "Outubro/2026",
-    status: "Critico",
-    note: "Cartao praticamente no limite, com fatura vencida e juros/encargos.",
-    purchases: [
-      "Samuel - R$ 86,70 - parcela 1/6",
-      "TIM - R$ 55,99",
-      "Apple - R$ 34,90",
-      "Juros e encargos - R$ 61,36"
-    ],
-    invoices: [
-      { month: "Junho/26", amount: 1073.70, status: "vencida" },
-      { month: "Julho/26", amount: 885.42, status: "aberta" },
-      { month: "Agosto/26", amount: 1338.79, status: "proximas" },
-      { month: "Setembro/26", amount: 0, status: "parcelas futuras" },
-      { month: "Outubro/26", amount: 0, status: "parcelas futuras" }
-    ]
-  },
-  {
-    name: "C6 Bank",
-    limit: 1500.00,
-    available: 8.78,
-    used: 1491.22,
-    currentInvoice: 411.88,
-    openInvoice: 0,
-    futureInvoices: 40.72,
-    lastChargeMonth: "Agosto/2026",
-    status: "Critico",
-    note: "Uso acima de 99% do limite. Ha parcelas futuras do Boticario.",
-    purchases: [
-      "Netflix - R$ 57,80",
-      "O Boticario - R$ 20,36 - parcela 3/5"
-    ],
-    invoices: [
-      { month: "Junho/26", amount: 411.88, status: "fechada" },
-      { month: "Julho/26", amount: 20.36, status: "parcela 4/5" },
-      { month: "Agosto/26", amount: 20.36, status: "parcela 5/5" }
-    ]
-  },
-  {
-    name: "Facil Visa",
-    limit: 988.00,
-    available: 43.00,
-    used: 945.00,
-    currentInvoice: 559.56,
-    openInvoice: 181.58,
-    futureInvoices: 188.36,
-    lastChargeMonth: "Agosto/2026",
-    status: "Alerta",
-    note: "Uso de aproximadamente 95,6% do limite. Ainda ha parcelamentos ate agosto.",
-    purchases: [
-      "CEA - R$ 66,66 - parcela 1/3",
-      "Pague Menos - R$ 27,52 - parcela 1/3",
-      "Posto Sao Joao - R$ 50,00"
-    ],
-    invoices: [
-      { month: "Junho/26", amount: 559.56, status: "fechada" },
-      { month: "Julho/26", amount: 181.58, status: "aberta" },
-      { month: "Agosto/26", amount: 94.18, status: "parcelas futuras" }
-    ]
-  },
-  {
-    name: "Caixa",
-    limit: 0,
-    available: 0,
-    used: 1188.76,
-    currentInvoice: 1188.76,
-    openInvoice: 0,
-    futureInvoices: 0,
-    lastChargeMonth: "Maio/2026",
-    status: "Alerta",
-    note: "Fatura completa informada pelo extrato da Caixa. Limite do cartao ainda nao cadastrado.",
-    purchases: [
-      "OTICA OURO - R$ 125,00 - parcela 09/10",
-      "CARLOS EDUARDO - R$ 121,06 - parcela 09/10",
-      "LOJAO RIO DO PE - R$ 138,23 - parcela 08/10",
-      "AF MOVEIS - R$ 49,00 - parcela 08/10",
-      "JOSUELUCIO DASIL - R$ 122,37 - parcela 05/10",
-      "ALLEXCELL - R$ 88,00 - parcela 04/12",
-      "AIRBNB PLATAFOR - R$ 148,40 - parcela 03/05",
-      "JIM COM HELLEN - R$ 129,46 - parcela 01/04",
-      "NORDESTE ATACAR - R$ 76,43 - parcela 01/03",
-      "MERCADOLIVRE PI - R$ 190,81 - parcela 06/12"
-    ],
-    invoices: [
-      { month: "Maio/26", amount: 1188.76, status: "fatura completa" }
-    ]
-  }
-];
+const creditCards = [];
 const thirdPartyCards = [];
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -302,9 +192,9 @@ async function setupSession() {
     if (savedSession) {
       try {
         const parsedSession = JSON.parse(savedSession);
-        updateProfileName(parsedSession.name || "Jefferson Lucio");
+        updateProfileName(parsedSession.name || "Usuario");
       } catch {
-        updateProfileName("Jefferson Lucio");
+        updateProfileName("Usuario");
       }
     }
     setAuthenticated(Boolean(savedSession));
@@ -324,7 +214,7 @@ async function setupSession() {
       return;
     }
 
-    const name = loginName.value.trim() || "Jefferson Lucio";
+    const name = loginName.value.trim() || "Usuario";
     localStorage.setItem(sessionStorageKey, JSON.stringify({ name, loggedAt: new Date().toISOString() }));
     updateProfileName(name);
     setAuthenticated(true);
@@ -462,6 +352,13 @@ function updateProfileName(name) {
   }
   if (cardsSectionTitle) {
     cardsSectionTitle.textContent = `Cartoes de ${firstName}`;
+  }
+  document.querySelectorAll("[data-settings-profile-name]").forEach((element) => {
+    element.textContent = cleanName;
+  });
+  const settingsNameInput = document.querySelector("#settingsNameInput");
+  if (settingsNameInput) {
+    settingsNameInput.value = cleanName;
   }
 }
 
@@ -1004,17 +901,7 @@ function applyBillCorrections(savedBills) {
 }
 
 function normalizeSavedBills(savedBills) {
-  return savedBills.map((bill) => {
-    if (bill.name === "Caixa" && bill.type === "Fatura") {
-      return { ...bill, name: "Caixa - fatura completa", amount: 1188.76, installmentsLeft: 1 };
-    }
-
-    if (bill.name === "iPhone 14 Pro Max" && bill.type === "Parcelamento") {
-      return { ...bill, name: "Celular", amount: 470.00, installmentsLeft: 4 };
-    }
-
-    return bill;
-  });
+  return savedBills;
 }
 
 function getInstallmentLabel(bill) {
