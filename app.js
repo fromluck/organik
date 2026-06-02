@@ -62,6 +62,7 @@ const authStage = document.querySelector("#acesso");
 const loginForm = document.querySelector("#loginForm");
 const loginName = document.querySelector("#loginName");
 const googleLoginButton = document.querySelector("#googleLoginButton");
+const existingAccountLoginButton = document.querySelector("#existingAccountLoginButton");
 const authStatus = document.querySelector("#authStatus");
 const dashboardGreeting = document.querySelector("#dashboardGreeting");
 const cardsSectionTitle = document.querySelector("#cardsSectionTitle");
@@ -222,6 +223,7 @@ async function setupSession() {
   });
 
   googleLoginButton?.addEventListener("click", signInWithGoogle);
+  existingAccountLoginButton?.addEventListener("click", signInWithGoogle);
 
   window.addEventListener("message", async (event) => {
     if (event.origin !== window.location.origin || event.data?.type !== "organik-auth-complete") return;
