@@ -371,8 +371,7 @@ async function signInWithGoogle() {
   );
 
   if (!popup) {
-    setAuthStatus("Permita popups ou continue na aba atual.");
-    window.location.href = data.url;
+    setAuthStatus("Popup bloqueado. Permita popups para escolher a conta Google.");
     return;
   }
 
