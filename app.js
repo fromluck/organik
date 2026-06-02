@@ -61,6 +61,7 @@ const landingMain = document.querySelector("#landingMain");
 const authStage = document.querySelector("#acesso");
 const loginForm = document.querySelector("#loginForm");
 const loginName = document.querySelector("#loginName");
+const authLogoBackButton = document.querySelector("#authLogoBackButton");
 const googleLoginButton = document.querySelector("#googleLoginButton");
 const existingAccountLoginButton = document.querySelector("#existingAccountLoginButton");
 const authStatus = document.querySelector("#authStatus");
@@ -224,6 +225,7 @@ async function setupSession() {
 
   googleLoginButton?.addEventListener("click", signInWithGoogle);
   existingAccountLoginButton?.addEventListener("click", signInWithGoogle);
+  authLogoBackButton?.addEventListener("click", showLandingStage);
 
   window.addEventListener("message", async (event) => {
     if (event.origin !== window.location.origin || event.data?.type !== "organik-auth-complete") return;
@@ -399,6 +401,15 @@ function showAuthStage() {
   landingMain.classList.add("is-hidden");
   authStage.classList.remove("is-hidden");
   authStage.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function showLandingStage() {
+  loginScreen.classList.remove("is-auth-open");
+  authStage.classList.add("is-hidden");
+  landingMain.classList.remove("is-hidden");
+  setAuthStatus("");
+  window.history.replaceState(null, "", window.location.pathname + window.location.search);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function closeProfileMenu() {

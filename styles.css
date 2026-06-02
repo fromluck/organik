@@ -1958,9 +1958,15 @@ select {
 
 .auth-logo {
   align-self: start;
+  border: 0;
+  background: transparent;
   color: #030705;
+  cursor: pointer;
+  font: inherit;
   font-size: 2rem;
   font-weight: 600;
+  letter-spacing: 0;
+  padding: 0;
 }
 
 .login-screen.is-auth-open .auth-logo {
